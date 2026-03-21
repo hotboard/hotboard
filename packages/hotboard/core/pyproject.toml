@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hotboard-core"
+version = "0.1.0"
+description = "Hotboard 核心库"
+requires-python = ">=3.12"
+dependencies = [
+    "aiohttp>=3.9.0"
+]
+authors = [
+    {name = "llnancy"}
+]
+license = {text = "Apache-2.0"}
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["hotboard.core*"]
+
+[tool.setuptools.package-dir]
+"hotboard.core" = "."

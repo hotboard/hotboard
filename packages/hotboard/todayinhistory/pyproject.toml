@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hotboard-todayinhistory"
+version = "0.1.0"
+description = "历史上的今天"
+requires-python = ">=3.12"
+dependencies = [
+    "hotboard-core>=0.1.0",
+    "typer",
+]
+authors = [
+    {name = "llnancy"}
+]
+license = {text = "Apache-2.0"}
+
+
+[project.urls]
+Homepage = "https://github.com/hotboard/hotboard"
+Repository = "https://github.com/hotboard/hotboard"
+Issues = "https://github.com/hotboard/hotboard/issues"
+
+[project.scripts]
+hotboard-todayinhistory = "hotboard.todayinhistory.main:run"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["hotboard.todayinhistory*"]
+
+[tool.setuptools.package-dir]
+"hotboard.todayinhistory" = "."

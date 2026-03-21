@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hotboard-miyoushe"
+version = "0.1.0"
+description = "米游社各游戏榜单"
+requires-python = ">=3.12"
+dependencies = [
+    "hotboard-core>=0.1.0",
+    "typer",
+]
+authors = [
+    {name = "llnancy"}
+]
+license = {text = "Apache-2.0"}
+
+
+[project.urls]
+Homepage = "https://github.com/hotboard/hotboard"
+Repository = "https://github.com/hotboard/hotboard"
+Issues = "https://github.com/hotboard/hotboard/issues"
+
+[project.scripts]
+hotboard-miyoushe = "hotboard.miyoushe.main:run"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["hotboard.miyoushe*"]
+
+[tool.setuptools.package-dir]
+"hotboard.miyoushe" = "."

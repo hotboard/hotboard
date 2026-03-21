@@ -1,0 +1,24 @@
+__pycache__/
+*.pyc
+*.egg-info/
+.venv/
+.pytest_cache/
+.coverage
+*.log
+.DS_Store
+dist/
+build/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Kiro
+.kiro/
+
+# Temporary files
+*.tmp
+.env
+.env.local

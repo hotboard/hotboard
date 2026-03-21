@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hotboard-pojie52"
+version = "0.1.0"
+description = "吾爱破解论坛数据获取工具"
+requires-python = ">=3.12"
+dependencies = [
+    "hotboard-core>=0.1.0",
+    "typer",
+]
+authors = [
+    {name = "llnancy"}
+]
+license = {text = "Apache-2.0"}
+
+
+[project.urls]
+Homepage = "https://github.com/hotboard/hotboard"
+Repository = "https://github.com/hotboard/hotboard"
+Issues = "https://github.com/hotboard/hotboard/issues"
+
+[project.scripts]
+hotboard-pojie52 = "hotboard.pojie52.main:run"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["hotboard.pojie52*"]
+
+[tool.setuptools.package-dir]
+"hotboard.pojie52" = "."
