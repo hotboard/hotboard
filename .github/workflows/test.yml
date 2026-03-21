@@ -23,6 +23,7 @@ jobs:
 
     - name: Install packages
       run: |
+        cd $GITHUB_WORKSPACE
         bash tests/install_dev.sh
 
     - name: Run all tests

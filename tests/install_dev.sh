@@ -3,15 +3,19 @@
 
 set -e
 
+# 获取脚本所在目录的父目录（项目根目录）
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+
 echo "安装开发环境..."
 
 # 安装核心包
 echo "安装核心包..."
-pip install -e src
+pip install -e "$PROJECT_ROOT/src"
 
 # 安装所有平台包
 echo "安装所有平台包..."
-for dir in packages/hotboard/*/; do
+for dir in "$PROJECT_ROOT/packages/hotboard/"*/; do
     if [ -f "${dir}pyproject.toml" ]; then
         echo "安装 ${dir}..."
         pip install -e "${dir}"
