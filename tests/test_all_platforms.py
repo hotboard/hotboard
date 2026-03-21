@@ -28,16 +28,11 @@ def test_platform_cli(module_name: str):
         module_name: 模块名
     """
     cmd = f"hotboard-{module_name}"
-    result = subprocess.run(
-        [cmd, "--format", "json"],
-        capture_output=True,
-        text=True,
-        timeout=30
-    )
-    
+    result = subprocess.run([cmd, "--format", "json"], capture_output=True, text=True, timeout=30)
+
     if result.returncode != 0:
         pytest.skip(f"Command {cmd} not available or failed")
         return
-    
+
     assert result.returncode == 0
     assert len(result.stdout) > 0
