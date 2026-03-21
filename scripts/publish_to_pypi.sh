@@ -3,7 +3,8 @@
 # 使用方法: bash scripts/publish_to_pypi.sh [package-name]
 # 示例: bash scripts/publish_to_pypi.sh github
 
-set -e
+# 不要在错误时退出，继续处理其他包
+set +e
 
 PACKAGE_NAME=$1
 
@@ -33,6 +34,21 @@ publish_package() {
     echo "路径: $pkg_path"
     echo "=========================================="
     
+    # 读取包的版本号
+    local version=$(grep '^version = ' $pkg_path/pyproject.toml | sed 's/version = "\(.*\)"/\1/')
+    local pypi_name="hotboard-$pkg_name"
+    if [ "$pkg_name" = "src" ]; then
+        pypi_name="hotboard-core"
+    fi
+    
+    # 检查版本是否已存在
+    echo "检查版本 $version 是否已存在..."
+    if pip index versions $pypi_name 2>/dev/null | grep -q "$version"; then
+        echo "⊘ $pypi_name $version 已存在，跳过"
+        echo ""
+        return 0
+    fi
+    
     # 清理旧的构建文件
     rm -rf $pkg_path/dist $pkg_path/build $pkg_path/*.egg-info
     
@@ -46,10 +62,15 @@ publish_package() {
     
     # 上传到 PyPI
     echo "上传到 PyPI..."
-    twine upload $pkg_path/dist/*
-    
-    echo "✓ $pkg_name 发布成功"
+    if twine upload --verbose $pkg_path/dist/*; then
+        echo "✓ $pkg_name 发布成功"
+    else
+        echo "✗ $pkg_name 发布失败"
+    fi
     echo ""
+    
+    # 添加延迟避免限流（增加到 10 秒）
+    sleep 10
 }
 
 # 发布所有包
@@ -58,7 +79,7 @@ if [ "$PACKAGE_NAME" = "all" ]; then
     echo ""
     
     # 先发布 core 包（其他包依赖它）
-    publish_package "src"
+    # publish_package "src"
     
     # 发布其他包
     for pkg_dir in packages/hotboard/*/; do

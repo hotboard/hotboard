@@ -21,13 +21,9 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-    - name: Install core package
+    - name: Install packages
       run: |
-        pip install -e src
-
-    - name: Install test dependencies
-      run: |
-        pip install pytest pytest-cov
+        bash tests/install_dev.sh
 
     - name: Run all tests
       run: |
