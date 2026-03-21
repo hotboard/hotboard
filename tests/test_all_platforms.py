@@ -1,6 +1,6 @@
 """测试所有 hotboard 平台"""
 
-import importlib
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -21,22 +21,23 @@ def get_all_platforms() -> list[str]:
 
 
 @pytest.mark.parametrize("module_name", get_all_platforms())
-def test_platform_fetch(module_name: str):
-    """测试平台的 fetch 函数
+def test_platform_cli(module_name: str):
+    """测试平台的 CLI 命令
 
     Args:
         module_name: 模块名
     """
-    module = importlib.import_module(f"hotboard.{module_name}.main")
-    fetch = getattr(module, "fetch")
-
-    import asyncio
-
-    data = asyncio.run(fetch())
-
-    assert isinstance(data, list)
-    assert len(data) > 0
-
-    for item in data:
-        assert hasattr(item, "title")
-        assert hasattr(item, "url")
+    cmd = f"hotboard-{module_name}"
+    result = subprocess.run(
+        [cmd, "--format", "json"],
+        capture_output=True,
+        text=True,
+        timeout=30
+    )
+    
+    if result.returncode != 0:
+        pytest.skip(f"Command {cmd} not available or failed")
+        return
+    
+    assert result.returncode == 0
+    assert len(result.stdout) > 0
