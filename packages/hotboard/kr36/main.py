@@ -1,12 +1,14 @@
 import asyncio
 import json
 import time
-import typer
-from typing import TypedDict
 from enum import StrEnum
-from hotboard.core.types import HotItem, OutputFormat
-from hotboard.core.utils import http_post, get_time, format_items_json
+from typing import Any, TypedDict
+
+import typer
+
 from hotboard.core.logger import logger
+from hotboard.core.types import HotItem, OutputFormat
+from hotboard.core.utils import format_items_json, get_time, http_post
 
 PLATFORM_NAME = "36 氪"
 
@@ -43,7 +45,7 @@ async def fetch(rank_type: str = "hot") -> list[HotItem]:
         "Referer": "https://m.36kr.com/",
         "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1",
     }
-    body: dict[str, any] = {
+    body: dict[str, Any] = {
         "partner_id": "wap",
         "param": {
             "siteId": 1,
@@ -51,13 +53,13 @@ async def fetch(rank_type: str = "hot") -> list[HotItem]:
         },
         "timestamp": int(time.time() * 1000),
     }
-    result: dict[str, any] = await http_post(url, headers, json.dumps(body))
+    result: dict[str, Any] = await http_post(url, headers, json.dumps(body))
     result_list_key = RANK_CONFIGS[rank_type]["list_key"]
-    item_list: list[dict[str, any]] = result.get("data", {}).get(result_list_key, [])
+    item_list: list[dict[str, Any]] = result.get("data", {}).get(result_list_key, [])
     items: list[HotItem] = []
     for item in item_list:
-        material: dict[str, any] = item.get("templateMaterial", {})
-        item_id: str = item.get("itemId")
+        material: dict[str, Any] = item.get("templateMaterial", {})
+        item_id: str = item.get("itemId", "")
         hot_item: HotItem = HotItem(
             id=item_id,
             title=material.get("widgetTitle"),

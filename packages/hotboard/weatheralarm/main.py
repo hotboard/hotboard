@@ -1,9 +1,12 @@
 import asyncio
-import typer
+from typing import Any
 from urllib.parse import quote
+
+import typer
+
+from hotboard.core.logger import logger
 from hotboard.core.types import HotItem, OutputFormat
 from hotboard.core.utils import format_items_json, http_get
-from hotboard.core.logger import logger
 
 PLATFORM_NAME = "中央气象台"
 
@@ -13,21 +16,20 @@ async def fetch(province: str = "") -> list[HotItem]:
     url: str = (
         f"http://www.nmc.cn/rest/findAlarm?pageNo=1&pageSize=20&signaltype=&signallevel=&province={quote(province)}"
     )
-    data: dict[str, any] = await http_get(url)
-    alarm_list: list[dict[str, any]] = data.get("data", {}).get("page", {}).get("list", [])
+    data: dict[str, Any] = await http_get(url)
+    alarm_list: list[dict[str, Any]] = data.get("data", {}).get("page", {}).get("list", [])
     items: list[HotItem] = []
     for item in alarm_list:
-        issue_time: str = item.get("issuetime")
-        url_path: str = item.get("url")
-        title: str = item.get("title")
+        issue_time: str = item.get("issuetime", "")
+        title: str = item.get("title", "")
         hot_item: HotItem = HotItem(
             id=item.get("alertid"),
             title=title,
             desc=f"{issue_time} {title}" if issue_time else title,
             cover=item.get("pic"),
             time=issue_time,
-            url=f"http://nmc.cn{url_path}",
-            mobile_url=f"http://nmc.cn{url_path}",
+            url=f"http://nmc.cn{item.get("url")}",
+            mobile_url=f"http://nmc.cn{item.get("url")}",
         )
         items.append(hot_item)
     return items

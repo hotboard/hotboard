@@ -1,10 +1,11 @@
 import asyncio
+from typing import Any
 
 import typer
 
-from hotboard.core.types import HotItem, OutputFormat
-from hotboard.core.utils import http_get, get_time, format_items_json
 from hotboard.core.logger import logger
+from hotboard.core.types import HotItem, OutputFormat
+from hotboard.core.utils import format_items_json, get_time, http_get
 
 PLATFORM_NAME = "数字尾巴"
 
@@ -13,7 +14,7 @@ async def fetch() -> list[HotItem]:
     """获取数字尾巴热门文章"""
     url: str = "https://opser.api.dgtle.com/v2/news/index"
 
-    result: dict[str, any] = await http_get(url)
+    result: dict[str, Any] = await http_get(url)
 
     items: list[HotItem] = []
     for item in result.get("items", []):

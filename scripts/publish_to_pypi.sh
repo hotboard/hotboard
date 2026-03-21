@@ -20,15 +20,8 @@ if [ -z "$PACKAGE_NAME" ]; then
 fi
 
 # 检查是否安装了 build 和 twine
-if ! command -v python -m build &> /dev/null; then
-    echo "安装 build 工具..."
-    pip install build
-fi
-
-if ! command -v twine &> /dev/null; then
-    echo "安装 twine 工具..."
-    pip install twine
-fi
+python -c "import build" 2>/dev/null || pip install build
+python -c "import twine" 2>/dev/null || pip install twine
 
 # 发布单个包
 publish_package() {
@@ -65,14 +58,11 @@ if [ "$PACKAGE_NAME" = "all" ]; then
     echo ""
     
     # 先发布 core 包（其他包依赖它）
-    if [ -d "packages/hotboard/core" ]; then
-        publish_package "packages/hotboard/core"
-    fi
+    publish_package "src"
     
     # 发布其他包
     for pkg_dir in packages/hotboard/*/; do
-        pkg_name=$(basename $pkg_dir)
-        if [ "$pkg_name" != "core" ] && [ -f "$pkg_dir/pyproject.toml" ]; then
+        if [ -f "$pkg_dir/pyproject.toml" ]; then
             publish_package "$pkg_dir"
         fi
     done
@@ -83,6 +73,11 @@ if [ "$PACKAGE_NAME" = "all" ]; then
 else
     # 发布指定包
     PKG_PATH="packages/hotboard/$PACKAGE_NAME"
+    
+    # core 包在 src 目录
+    if [ "$PACKAGE_NAME" = "core" ]; then
+        PKG_PATH="src"
+    fi
     
     if [ ! -d "$PKG_PATH" ]; then
         echo "错误: 包 $PACKAGE_NAME 不存在"

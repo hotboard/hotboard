@@ -1,11 +1,12 @@
 import asyncio
+from enum import StrEnum
+from typing import Any
 
 import typer
-from enum import StrEnum
 
-from hotboard.core.types import HotItem, OutputFormat
-from hotboard.core.utils import http_get, format_items_json
 from hotboard.core.logger import logger
+from hotboard.core.types import HotItem, OutputFormat
+from hotboard.core.utils import format_items_json, http_get
 
 PLATFORM_NAME = "虎扑"
 
@@ -33,7 +34,7 @@ async def fetch(type: str = "1") -> list[HotItem]:
     """获取虎扑步行街热帖"""
     url: str = f"https://m.hupu.com/api/v2/bbs/topicThreads?topicId={type}&page=1"
 
-    result: dict[str, any] = await http_get(url)
+    result: dict[str, Any] = await http_get(url)
 
     items: list[HotItem] = []
     for item in result["data"]["topicThreads"]:

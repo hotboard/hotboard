@@ -1,9 +1,12 @@
 import asyncio
-import typer
+from typing import Any
 from urllib.parse import quote
-from hotboard.core.types import HotItem, OutputFormat
-from hotboard.core.utils import http_get, format_items_json, get_time
+
+import typer
+
 from hotboard.core.logger import logger
+from hotboard.core.types import HotItem, OutputFormat
+from hotboard.core.utils import format_items_json, get_time, http_get
 
 PLATFORM_NAME = "水木社区"
 
@@ -11,13 +14,13 @@ PLATFORM_NAME = "水木社区"
 async def fetch() -> list[HotItem]:
     """获取水木社区热门话题"""
     url: str = "https://wap.newsmth.net/wap/api/hot/global"
-    data: dict[str, any] = await http_get(url)
-    topics: list[dict[str, any]] = data.get("data", {}).get("topics", [])
+    data: dict[str, Any] = await http_get(url)
+    topics: list[dict[str, Any]] = data.get("data", {}).get("topics", [])
     items: list[HotItem] = []
     for topic in topics:
-        article: dict[str, any] = topic.get("article", {})
-        topic_id: str = article.get("topicId")
-        board_title: str = topic.get("board").get("title")
+        article: dict[str, Any] = topic.get("article", {})
+        topic_id: str = article.get("topicId", "")
+        board_title: str = topic.get("board", {}).get("title")
         article_url: str = (
             f"https://wap.newsmth.net/article/{topic_id}?title={quote(board_title)}&from=home"
         )
@@ -25,7 +28,7 @@ async def fetch() -> list[HotItem]:
             id=topic.get("firstArticleId"),
             title=article.get("subject"),
             desc=article.get("body"),
-            author=article.get("account").get("name"),
+            author=article.get("account", {}).get("name"),
             time=get_time(article.get("postTime")),
             url=article_url,
             mobile_url=article_url,

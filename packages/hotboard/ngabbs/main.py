@@ -1,9 +1,12 @@
 import asyncio
 import json
+from typing import Any
+
 import typer
+
+from hotboard.core.logger import logger
 from hotboard.core.types import HotItem, OutputFormat
 from hotboard.core.utils import format_items_json, get_time, http_post_text
-from hotboard.core.logger import logger
 
 PLATFORM_NAME = "NGA"
 
@@ -26,12 +29,12 @@ async def fetch() -> list[HotItem]:
         "X-User-Agent": "NGA_skull/7.3.1(iPhone13,2;iOS 17.2.1)",
     }
     text: str = await http_post_text(url, headers=headers, body="__output=14")
-    data: dict[str, any] = json.loads(text)
-    result_list: list[list[dict[str, any]]] = data.get("result", [[]])
-    item_list: list[dict[str, any]] = result_list[0] if result_list else []
+    data: dict[str, Any] = json.loads(text)
+    result_list: list[list[dict[str, Any]]] = data.get("result", [[]])
+    item_list: list[dict[str, Any]] = result_list[0] if result_list else []
     items: list[HotItem] = []
     for item in item_list:
-        tpcurl: str = item.get("tpcurl")
+        tpcurl: str = item.get("tpcurl", "")
         hot_item: HotItem = HotItem(
             id=item.get("tid"),
             title=item.get("subject"),

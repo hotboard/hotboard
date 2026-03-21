@@ -13,15 +13,15 @@ if [ -z "$PACKAGE_NAME" ]; then
 fi
 
 # 检查工具
-if ! command -v python -m build &> /dev/null; then
-    pip install build
-fi
-
-if ! command -v twine &> /dev/null; then
-    pip install twine
-fi
+python -c "import build" 2>/dev/null || pip install build
+python -c "import twine" 2>/dev/null || pip install twine
 
 PKG_PATH="packages/hotboard/$PACKAGE_NAME"
+
+# core 包在 src 目录
+if [ "$PACKAGE_NAME" = "core" ]; then
+    PKG_PATH="src"
+fi
 
 if [ ! -d "$PKG_PATH" ]; then
     echo "错误: 包 $PACKAGE_NAME 不存在"

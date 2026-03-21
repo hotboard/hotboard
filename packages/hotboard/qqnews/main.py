@@ -1,8 +1,11 @@
 import asyncio
+from typing import Any
+
 import typer
+
+from hotboard.core.logger import logger
 from hotboard.core.types import HotItem, OutputFormat
 from hotboard.core.utils import format_items_json, get_time, http_get
-from hotboard.core.logger import logger
 
 PLATFORM_NAME = "腾讯新闻"
 
@@ -10,19 +13,22 @@ PLATFORM_NAME = "腾讯新闻"
 async def fetch() -> list[HotItem]:
     """获取腾讯新闻热点榜"""
     url: str = "https://r.inews.qq.com/gw/event/hot_ranking_list?page_size=50"
-    data: dict[str, any] = await http_get(url)
-    newslist: list[dict[str, any]] = data.get("idlist")[0].get("newslist")
-    item_list: list[dict[str, any]] = newslist[1:] if len(newslist) > 1 else newslist
+    data: dict[str, Any] = await http_get(url)
+    idlist = data.get("idlist")
+    if not idlist or not isinstance(idlist, list) or len(idlist) == 0:
+        return []
+    newslist: list[dict[str, Any]] = idlist[0].get("newslist", [])
+    item_list: list[dict[str, Any]] = newslist[1:] if len(newslist) > 1 else newslist
     items: list[HotItem] = []
     for item in item_list:
-        item_id: str = item.get("id")
+        item_id: str = item.get("id", "")
         hot_item: HotItem = HotItem(
             id=item_id,
             title=item.get("title"),
             desc=item.get("abstract"),
             cover=item.get("miniProShareImage"),
             author=item.get("source"),
-            hot=item.get("hotEvent").get("hotScore"),
+            hot=item.get("hotEvent", {}).get("hotScore"),
             time=get_time(item.get("timestamp")),
             url=f"https://new.qq.com/rain/a/{item_id}",
             mobile_url=f"https://view.inews.qq.com/k/{item_id}",

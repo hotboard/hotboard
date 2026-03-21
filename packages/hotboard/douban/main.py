@@ -1,13 +1,13 @@
 import asyncio
 import re
+from enum import StrEnum
 
 import typer
-from enum import StrEnum
 from bs4 import BeautifulSoup
 
-from hotboard.core.types import HotItem, OutputFormat
-from hotboard.core.utils import http_get_text, get_time, format_items_json
 from hotboard.core.logger import logger
+from hotboard.core.types import HotItem, OutputFormat
+from hotboard.core.utils import format_items_json, get_time, http_get_text
 
 PLATFORM_NAME = "豆瓣"
 
@@ -43,7 +43,7 @@ async def fetch_group() -> list[HotItem]:
     items: list[HotItem] = []
     for item in soup.select(".article .channel-item"):
         link_elem = item.select_one("h3 a")
-        url_href: str | None = link_elem.get("href") if link_elem else None
+        url_href: str | None = link_elem.get_text("href") if link_elem else None
 
         title: str | None = link_elem.get_text(strip=True) if link_elem else None
 
@@ -57,7 +57,7 @@ async def fetch_group() -> list[HotItem]:
         hot_text: str | None = hot_elem.get_text(strip=True) if hot_elem else None
 
         cover_elem = item.select_one(".pic-wrap img")
-        cover: str | None = cover_elem.get("src") if cover_elem else None
+        cover: str | None = cover_elem.get_text("src") if cover_elem else None
 
         topic_id: int = get_numbers(url_href)
         hot_item: HotItem = HotItem(
@@ -89,8 +89,8 @@ async def fetch_movie() -> list[HotItem]:
     items: list[HotItem] = []
     for item in soup.select(".article tr.item"):
         link_elem = item.select_one("a")
-        url_href: str | None = link_elem.get("href") if link_elem else None
-        movie_title: str | None = link_elem.get("title") if link_elem else None
+        url_href: str | None = link_elem.get_text("href") if link_elem else None
+        movie_title: str | None = link_elem.get_text("title") if link_elem else None
 
         score_elem = item.select_one(".rating_nums")
         score_text: str | None = score_elem.get_text(strip=True) if score_elem else None
@@ -100,7 +100,7 @@ async def fetch_movie() -> list[HotItem]:
         title: str = f"{movie_title} {score}" if movie_title else ""
 
         cover_elem = item.select_one("img")
-        cover: str | None = cover_elem.get("src") if cover_elem else None
+        cover: str | None = cover_elem.get_text("src") if cover_elem else None
 
         desc_elem = item.select_one("p.pl")
         desc: str | None = desc_elem.get_text(strip=True) if desc_elem else None

@@ -1,9 +1,12 @@
 import asyncio
-import typer
+from typing import Any
 from urllib.parse import quote
-from hotboard.core.types import HotItem, OutputFormat
-from hotboard.core.utils import http_get, format_items_json
+
+import typer
+
 from hotboard.core.logger import logger
+from hotboard.core.types import HotItem, OutputFormat
+from hotboard.core.utils import format_items_json, http_get
 
 PLATFORM_NAME = "微博"
 
@@ -15,11 +18,11 @@ async def fetch() -> list[HotItem]:
         "Referer": "https://weibo.com/",
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
     }
-    result: dict[str, any] = await http_get(url, headers)
-    realtime: list[dict[str, any]] = result.get("data", {}).get("realtime", [])
+    result: dict[str, Any] = await http_get(url, headers)
+    realtime: list[dict[str, Any]] = result.get("data", {}).get("realtime", [])
     items: list[HotItem] = []
     for item in realtime:
-        title: str = item.get("word")
+        title: str = item.get("word", "")
         url: str = f"https://s.weibo.com/weibo?q={quote(title)}"
         hot_item: HotItem = HotItem(
             title=title,

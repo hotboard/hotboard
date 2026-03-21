@@ -1,8 +1,11 @@
 import asyncio
+from typing import Any
+
 import typer
+
+from hotboard.core.logger import logger
 from hotboard.core.types import HotItem, OutputFormat
 from hotboard.core.utils import format_items_json, get_time, http_get
-from hotboard.core.logger import logger
 
 PLATFORM_NAME = "百度贴吧"
 
@@ -10,13 +13,12 @@ PLATFORM_NAME = "百度贴吧"
 async def fetch() -> list[HotItem]:
     """获取百度贴吧热议榜"""
     url: str = "https://tieba.baidu.com/hottopic/browse/topicList"
-    data: dict[str, any] = await http_get(url)
-    topic_list: list[dict[str, any]] = (
+    data: dict[str, Any] = await http_get(url)
+    topic_list: list[dict[str, Any]] = (
         data.get("data", {}).get("bang_topic", {}).get("topic_list", [])
     )
     items: list[HotItem] = []
     for item in topic_list:
-        topic_url: str = item.get("topic_url")
         hot_item: HotItem = HotItem(
             id=item.get("topic_id"),
             title=item.get("topic_name"),
@@ -24,8 +26,8 @@ async def fetch() -> list[HotItem]:
             cover=item.get("topic_pic"),
             hot=item.get("discuss_num"),
             time=get_time(item.get("create_time")),
-            url=topic_url,
-            mobile_url=topic_url,
+            url=item.get("topic_url"),
+            mobile_url=item.get("topic_url"),
         )
         items.append(hot_item)
     return items

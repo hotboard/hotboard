@@ -1,10 +1,11 @@
 import asyncio
+from typing import Any
 
 import typer
 
-from hotboard.core.types import HotItem, OutputFormat
-from hotboard.core.utils import http_get, get_time, format_items_json
 from hotboard.core.logger import logger
+from hotboard.core.types import HotItem, OutputFormat
+from hotboard.core.utils import format_items_json, get_time, http_get
 
 PLATFORM_NAME = "果壳"
 
@@ -17,17 +18,17 @@ async def fetch() -> list[HotItem]:
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0",
     }
 
-    result: list[dict[str, any]] = await http_get(url, headers)
+    result: list[dict[str, Any]] = await http_get(url, headers)
 
     items: list[HotItem] = []
     for item in result:
-        article_id: str = item.get("id")
-        title: str = item.get("title")
+        article_id: str | None = item.get("id")
+        title: str | None = item.get("title")
         summary: str | None = item.get("summary")
         small_image: str | None = item.get("small_image")
         date_modified: str | None = item.get("date_modified")
 
-        author_data: dict[str, any] | None = item.get("author")
+        author_data: dict[str, Any] | None = item.get("author")
         author: str | None = None
         if author_data:
             author = author_data.get("nickname")

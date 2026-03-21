@@ -4,18 +4,20 @@
 
 ### 1. 注册 PyPI 账号
 
-- 生产环境: https://pypi.org/account/register/
-- 测试环境: https://test.pypi.org/account/register/
+- 生产环境：[https://pypi.org/account/register/](https://pypi.org/account/register/)
+- 测试环境：[https://test.pypi.org/account/register/](https://test.pypi.org/account/register/)
 
 ### 2. 创建 API Token
 
 生产环境 (PyPI):
-1. 访问 https://pypi.org/manage/account/token/
+
+1. 访问 [https://pypi.org/manage/account/token/](https://pypi.org/manage/account/token/)
 2. 创建 API token，scope 选择 "Entire account" 或指定项目
 3. 保存 token（只显示一次）
 
 测试环境 (TestPyPI):
-1. 访问 https://test.pypi.org/manage/account/token/
+
+1. 访问 [https://test.pypi.org/manage/account/token/](https://test.pypi.org/manage/account/token/)
 2. 同样创建 token
 
 ### 3. 配置 PyPI 凭证
@@ -39,6 +41,7 @@ password = pypi-AgEIcHlwaS5vcmcC...  # 你的 TestPyPI token
 ```
 
 设置文件权限：
+
 ```bash
 chmod 600 ~/.pypirc
 ```
@@ -85,7 +88,7 @@ bash scripts/publish_to_pypi.sh all
 
 ```bash
 # 1. 进入包目录
-cd packages/hotboard/core
+cd src
 
 # 2. 清理旧文件
 rm -rf dist build *.egg-info
@@ -125,27 +128,44 @@ bash scripts/publish_to_pypi.sh baidu
 
 ### 更新版本号
 
-修改 `pyproject.toml` 中的 `version` 字段：
+修改对应包的 `pyproject.toml` 中的 `version` 字段：
+
+**核心包**（位于 `src/pyproject.toml`）：
 
 ```toml
 [project]
 name = "hotboard-core"
-version = "0.1.1"  # 更新这里
+version = "0.0.2"  # 更新这里
+```
+
+**平台包**（位于 `packages/hotboard/{platform}/pyproject.toml`）：
+
+```toml
+[project]
+name = "hotboard-github"
+version = "0.0.2"  # 更新这里
 ```
 
 ### 版本号规范
 
 遵循 [语义化版本](https://semver.org/lang/zh-CN/)：
 
-- `0.1.0` → `0.1.1`: 修复 bug
-- `0.1.0` → `0.2.0`: 新增功能（向下兼容）
-- `0.1.0` → `1.0.0`: 重大变更（不兼容）
+- `0.0.1` → `0.0.2`: 修复 bug
+- `0.0.1` → `0.1.0`: 新增功能（向下兼容）
+- `0.0.1` → `1.0.0`: 重大变更（不兼容）
 
 ### 批量更新版本号
 
+**更新核心包**：
+
 ```bash
-# 更新所有包到 0.1.1
-find packages/hotboard -name "pyproject.toml" -exec sed -i '' 's/version = "0.1.0"/version = "0.1.1"/g' {} \;
+sed -i '' 's/version = "0.0.1"/version = "0.0.2"/g' src/pyproject.toml
+```
+
+**更新所有平台包**：
+
+```bash
+find packages/hotboard -name "pyproject.toml" -exec sed -i '' 's/version = "0.0.1"/version = "0.0.2"/g' {} \;
 ```
 
 ## 验证发布
@@ -180,36 +200,38 @@ hotboard-github --help
 
 ### 1. 包名已存在
 
-错误: `The name 'hotboard-xxx' is already taken`
+错误：`The name 'hotboard-xxx' is already taken`
 
-解决: 包名在 PyPI 上是全局唯一的，需要更换名称或联系原作者。
+解决：包名在 PyPI 上是全局唯一的，需要更换名称或联系原作者。
 
 ### 2. 版本号已存在
 
-错误: `File already exists`
+错误：`File already exists`
 
-解决: PyPI 不允许覆盖已发布的版本，必须更新版本号。
+解决：PyPI 不允许覆盖已发布的版本，必须更新版本号。
 
 ### 3. 依赖包找不到
 
-错误: `Could not find a version that satisfies the requirement hotboard-core`
+错误：`Could not find a version that satisfies the requirement hotboard-core`
 
-解决: 确保先发布 `hotboard-core` 包。
+解决：确保先发布 `hotboard-core` 包。
 
 ### 4. Token 认证失败
 
-错误: `Invalid or non-existent authentication information`
+错误：`Invalid or non-existent authentication information`
 
-解决:
+解决：
+
 - 检查 `~/.pypirc` 配置
 - 确认 token 正确且未过期
 - Token 必须以 `pypi-` 开头
 
 ### 5. 构建失败
 
-错误: `No module named 'build'`
+错误：`No module named 'build'`
 
-解决:
+解决：
+
 ```bash
 pip install --upgrade build twine setuptools wheel
 ```
@@ -239,16 +261,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
-      
+          python-version: "3.12"
+
       - name: Install dependencies
         run: |
           pip install build twine
-      
+
       - name: Build and publish
         env:
           TWINE_USERNAME: __token__
@@ -258,6 +280,7 @@ jobs:
 ```
 
 在 GitHub 仓库设置中添加 Secret:
+
 - Name: `PYPI_API_TOKEN`
 - Value: 你的 PyPI API token
 

@@ -1,10 +1,13 @@
 import asyncio
-import typer
-from urllib.parse import quote
 from enum import StrEnum
+from typing import Any
+from urllib.parse import quote
+
+import typer
+
+from hotboard.core.logger import logger
 from hotboard.core.types import HotItem, OutputFormat
 from hotboard.core.utils import format_items_json, get_time, http_get
-from hotboard.core.logger import logger
 
 PLATFORM_NAME = "少数派"
 
@@ -22,16 +25,16 @@ class ArticleType(StrEnum):
 async def fetch(article_type: str = "热门文章") -> list[HotItem]:
     """获取少数派热榜"""
     url: str = f"https://sspai.com/api/v1/article/tag/page/get?limit=40&tag={quote(article_type)}"
-    data: dict[str, any] = await http_get(url)
-    item_list: list[dict[str, any]] = data.get("data", [])
+    data: dict[str, Any] = await http_get(url)
+    item_list: list[dict[str, Any]] = data.get("data", [])
     items: list[HotItem] = []
     for item in item_list:
-        item_id: str = item.get("id")
+        item_id: str = item.get("id", "")
         hot_item: HotItem = HotItem(
             id=item_id,
             title=item.get("title"),
             desc=item.get("summary"),
-            author=item.get("author").get("nickname"),
+            author=item.get("author", {}).get("nickname"),
             hot=item.get("like_count"),
             time=get_time(item.get("released_time")),
             url=f"https://sspai.com/post/{item_id}",

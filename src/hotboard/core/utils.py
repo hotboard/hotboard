@@ -1,28 +1,17 @@
 """工具函数"""
 
 import hashlib
-import aiohttp
-import os
 import json
+import os
 from dataclasses import asdict
-import argparse
 from datetime import datetime
 from email.utils import parsedate_to_datetime
-from hotboard.core.logger import logger, _is_debug
-from hotboard.core.types import OutputFormat, HotItem
+from typing import Any
 
+import aiohttp
 
-def create_parser(description: str) -> argparse.ArgumentParser:
-    """创建带通用参数的 ArgumentParser"""
-    parser = argparse.ArgumentParser(description=description)
-    parser.add_argument(
-        "--format",
-        type=str,
-        default=OutputFormat.MARKDOWN,
-        choices=[f.value for f in OutputFormat],
-        help="输出格式",
-    )
-    return parser
+from hotboard.core.logger import _is_debug, logger
+from hotboard.core.types import HotItem
 
 
 def get_proxy() -> str | None:
@@ -35,7 +24,7 @@ def get_proxy() -> str | None:
     )
 
 
-async def http_get(url: str, headers: dict[str, str] | None = None) -> any:
+async def http_get(url: str, headers: dict[str, str] | None = None) -> Any:
     """发送 HTTP GET 请求，返回 JSON 数据"""
     if _is_debug():
         logger.debug(f"GET {url}")
@@ -53,7 +42,7 @@ async def http_get(url: str, headers: dict[str, str] | None = None) -> any:
 
 async def http_get_with_headers(
     url: str, headers: dict[str, str] | None = None
-) -> tuple[dict[str, any], dict[str, str]]:
+) -> tuple[dict[str, Any], dict[str, str]]:
     """发送 HTTP GET 请求，返回 JSON 数据和响应头"""
     if _is_debug():
         logger.debug(f"GET {url}")
@@ -62,7 +51,7 @@ async def http_get_with_headers(
 
     async with aiohttp.ClientSession() as session:
         async with session.get(url, headers=headers, proxy=get_proxy()) as response:
-            json_data: dict[str, any] = await response.json()
+            json_data: dict[str, Any] = await response.json()
             response_headers: dict[str, str] = dict(response.headers)
             if _is_debug():
                 logger.debug(f"Status: {response.status}")
@@ -91,7 +80,7 @@ async def http_get_text(
 
 async def http_post(
     url: str, headers: dict[str, str] | None = None, body: str | None = None
-) -> dict[str, any]:
+) -> dict[str, Any]:
     """发送 HTTP POST 请求，返回 JSON 数据"""
     if _is_debug():
         logger.debug(f"POST {url}")
@@ -138,7 +127,7 @@ def md5_hash(text: str) -> str:
     return hashlib.md5(text.encode()).hexdigest()
 
 
-def get_time(time_input: str | int) -> str | None:
+def get_time(time_input: str | int | None) -> str | None:
     """将时间转换为可读格式"""
     if not time_input:
         return None
@@ -186,7 +175,7 @@ def get_time(time_input: str | int) -> str | None:
 
 def format_items_json(platform: str, items: list[HotItem], type_name: str) -> str:
     """将 HotItem 列表格式化为 JSON"""
-    output: dict[str, any] = {
+    output: dict[str, Any] = {
         "platform": platform,
         "type": type_name,
         "total": len(items),

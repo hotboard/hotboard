@@ -4,9 +4,9 @@ import re
 import typer
 from bs4 import BeautifulSoup
 
-from hotboard.core.types import HotItem, OutputFormat
-from hotboard.core.utils import http_get_text, format_items_json
 from hotboard.core.logger import logger
+from hotboard.core.types import HotItem, OutputFormat
+from hotboard.core.utils import format_items_json, http_get_text
 
 PLATFORM_NAME = "Hacker News"
 
@@ -37,11 +37,19 @@ async def fetch() -> list[HotItem]:
 
     items: list[HotItem] = []
     for story in soup.find_all("tr", class_="athing"):
-        story_id: str = story.get("id")
+        story_id_attr = story.get("id")
+        if not story_id_attr or not isinstance(story_id_attr, str):
+            continue
+        story_id: str = story_id_attr
+
         title_el = story.select_one(".titleline a")
+        if not title_el:
+            continue
 
         title: str = title_el.get_text(strip=True)
-        href: str = title_el.get("href")
+        href = title_el.get("href")
+        if not href or not isinstance(href, str):
+            continue
         story_url: str = href if href.startswith("http") else f"{base_url}/item?id={story_id}"
 
         score_el = soup.find("span", id=f"score_{story_id}")

@@ -1,11 +1,12 @@
 import asyncio
 import time
+from typing import Any
 
 import typer
 
-from hotboard.core.types import HotItem, OutputFormat
-from hotboard.core.utils import http_get, get_time, format_items_json, md5_hash
 from hotboard.core.logger import logger
+from hotboard.core.types import HotItem, OutputFormat
+from hotboard.core.utils import format_items_json, get_time, http_get, md5_hash
 
 PLATFORM_NAME = "51CTO"
 
@@ -13,11 +14,11 @@ PLATFORM_NAME = "51CTO"
 async def get_token() -> str:
     """获取 51CTO API token"""
     url: str = "https://api-media.51cto.com/api/token-get"
-    result: dict[str, any] = await http_get(url)
+    result: dict[str, Any] = await http_get(url)
     return result.get("data", {}).get("data", {}).get("token", "")
 
 
-def sign(request_path: str, params: dict[str, any], timestamp: int, token: str) -> str:
+def sign(request_path: str, params: dict[str, Any], timestamp: int, token: str) -> str:
     """生成请求签名"""
     params["timestamp"] = timestamp
     params["token"] = token
@@ -33,7 +34,7 @@ async def fetch() -> list[HotItem]:
     """获取 51CTO 推荐榜"""
     token: str = await get_token()
     timestamp: int = int(time.time() * 1000)
-    params: dict[str, any] = {
+    params: dict[str, Any] = {
         "page": 1,
         "page_size": 50,
         "limit_time": 0,
@@ -42,7 +43,7 @@ async def fetch() -> list[HotItem]:
     request_path: str = "index/index/recommend"
     signature: str = sign(request_path, params.copy(), timestamp, token)
     url: str = "https://api-media.51cto.com/index/index/recommend"
-    query_params: dict[str, any] = {
+    query_params: dict[str, Any] = {
         **params,
         "timestamp": timestamp,
         "token": token,
@@ -51,9 +52,9 @@ async def fetch() -> list[HotItem]:
     # 构建完整 URL
     query_str: str = "&".join([f"{k}={v}" for k, v in query_params.items()])
     full_url: str = f"{url}?{query_str}"
-    result: dict[str, any] = await http_get(full_url)
+    result: dict[str, Any] = await http_get(full_url)
     items: list[HotItem] = []
-    item_list: list[dict[str, any]] = result.get("data", {}).get("data", {}).get("list", [])
+    item_list: list[dict[str, Any]] = result.get("data", {}).get("data", {}).get("list", [])
     for item in item_list:
         hot_item: HotItem = HotItem(
             id=item.get("source_id"),

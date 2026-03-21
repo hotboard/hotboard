@@ -1,12 +1,13 @@
 import asyncio
-import re
 import json
+import re
+from typing import Any
 
 import typer
 
-from hotboard.core.types import HotItem, OutputFormat
-from hotboard.core.utils import http_get_text, get_time, format_items_json
 from hotboard.core.logger import logger
+from hotboard.core.types import HotItem, OutputFormat
+from hotboard.core.utils import format_items_json, get_time, http_get_text
 
 PLATFORM_NAME = "虎嗅"
 
@@ -21,7 +22,7 @@ async def fetch() -> list[HotItem]:
     }
 
     text: str = await http_get_text(url, headers)
-    result: dict[str, any] = json.loads(text)
+    result: dict[str, Any] = json.loads(text)
 
     items: list[HotItem] = []
     for item in result["data"]["moment_list"]["datalist"]:
@@ -38,12 +39,12 @@ async def fetch() -> list[HotItem]:
             if len(lines) > 1:
                 desc = "\n".join(lines[1:])
 
-        object_id: str = item.get("object_id")
-        user_info: dict[str, any] = item.get("user_info")
-        username: str = user_info.get("username") if user_info else None
-        publish_time: str = item.get("publish_time")
-        count_info: dict[str, any] = item.get("count_info")
-        agree_num: int = count_info.get("agree_num") if count_info else None
+        object_id: str | None = item.get("object_id")
+        user_info: dict[str, Any] = item.get("user_info")
+        username: str | None = user_info.get("username") if user_info else None
+        publish_time: str | None = item.get("publish_time")
+        count_info: dict[str, Any] = item.get("count_info")
+        agree_num: int | None = count_info.get("agree_num") if count_info else None
 
         hot_item: HotItem = HotItem(
             id=object_id,

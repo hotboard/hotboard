@@ -1,12 +1,12 @@
 import asyncio
 import re
-import typer
 
+import typer
 from bs4 import BeautifulSoup
 
-from hotboard.core.types import HotItem, OutputFormat
-from hotboard.core.utils import http_get_text, format_items_json
 from hotboard.core.logger import logger
+from hotboard.core.types import HotItem, OutputFormat
+from hotboard.core.utils import format_items_json, http_get_text
 
 PLATFORM_NAME = "简书"
 
@@ -29,13 +29,20 @@ async def fetch() -> list[HotItem]:
 
     items: list[HotItem] = []
     for item in list_dom:
-        href: str = item.select_one("a")["href"] if item.select_one("a") else ""
+        a_tag = item.select_one("a")
+        href_attr = a_tag.get("href") if a_tag else None
+        href: str = str(href_attr) if href_attr and isinstance(href_attr, str) else ""
+
         a_title = item.select_one("a.title")
-        title: str = a_title.get_text(strip=True) if a_title else ""
+        title: str | None = a_title.get_text(strip=True) if a_title else None
+
         cover_tag = item.select_one("img")
-        cover: str | None = cover_tag.get("src") if cover_tag else None
+        cover_attr = cover_tag.get("src") if cover_tag else None
+        cover: str | None = str(cover_attr) if cover_attr and isinstance(cover_attr, str) else None
+
         desc_tag = item.select_one("p.abstract")
         desc: str | None = desc_tag.get_text(strip=True) if desc_tag else None
+
         author_tag = item.select_one("a.nickname")
         author: str | None = author_tag.get_text(strip=True) if author_tag else None
 
@@ -79,7 +86,7 @@ def format_output(items: list[HotItem], type_name: str, format: OutputFormat) ->
 def main(format: OutputFormat = typer.Option(OutputFormat.MARKDOWN, help="输出格式")):
     """简书热门推荐"""
     items: list[HotItem] = asyncio.run(fetch())
-    print(format_output(items, format))
+    print(format_output(items, "热门推荐", format))
     logger.info(f"获取 [{PLATFORM_NAME} - 热门推荐] 成功，共 {len(items)} 条")
 
 

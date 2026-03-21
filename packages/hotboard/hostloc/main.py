@@ -1,12 +1,12 @@
 import asyncio
+from enum import StrEnum
 
 import feedparser
 import typer
-from enum import StrEnum
 
-from hotboard.core.types import HotItem, OutputFormat
-from hotboard.core.utils import http_get_text, get_time, format_items_json
 from hotboard.core.logger import logger
+from hotboard.core.types import HotItem, OutputFormat
+from hotboard.core.utils import format_items_json, get_time, http_get_text
 
 PLATFORM_NAME = "全球主机交流"
 
@@ -40,22 +40,22 @@ async def fetch(type: str = "hot") -> list[HotItem]:
     feed: feedparser.util.FeedParserDict = feedparser.parse(content)
 
     items: list[HotItem] = []
-    for entry in feed.get("entries"):
-        content_text: str = (
-            entry.get("content", [{}])[0].get("value", "") if "content" in entry else ""
-        )
-        desc: str = content_text.strip() if content_text else entry.get("summary")
+    for entry in feed.get("entries") or []:
+        content_list = entry.get("content") or []
+        content_text = content_list[0].get("value", "") if content_list else ""
 
-        guid: str = entry.get("id", entry.get("guid"))
+        desc: str = str(content_text).strip() if content_text else str(entry.get("summary"))
+
+        guid: str = str(entry.get("id", str(entry.get("guid"))))
 
         hot_item: HotItem = HotItem(
             id=guid,
-            title=entry.get("title"),
+            title=str(entry.get("title")),
             desc=desc,
-            author=entry.get("author"),
-            time=get_time(entry.get("published")),
-            url=entry.get("link"),
-            mobile_url=entry.get("link"),
+            author=str(entry.get("author")),
+            time=get_time(str(entry.get("published"))),
+            url=str(entry.get("link")),
+            mobile_url=str(entry.get("link")),
         )
         items.append(hot_item)
 

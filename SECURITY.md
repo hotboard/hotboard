@@ -4,7 +4,7 @@
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 0.1.x   | :white_check_mark: |
+| 0.0.x   | :white_check_mark: |
 
 ## Reporting a Vulnerability
 
@@ -14,14 +14,14 @@
 2. 发送邮件至项目维护者（请在 GitHub profile 中查找联系方式）
 3. 或通过 GitHub Security Advisory 私密报告
 
-### 报告内容应包括：
+### 报告内容应包括
 
 - 漏洞描述
 - 复现步骤
 - 影响范围
 - 可能的修复方案（如果有）
 
-### 响应时间：
+### 响应时间
 
 - 我们会在 48 小时内确认收到报告
 - 在 7 天内提供初步评估

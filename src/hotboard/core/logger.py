@@ -1,10 +1,10 @@
 """日志模块"""
 
 import logging
-import sys
 import os
-from pathlib import Path
+import sys
 from logging.handlers import RotatingFileHandler
+from pathlib import Path
 
 
 def _is_debug() -> bool:

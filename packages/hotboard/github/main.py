@@ -1,12 +1,12 @@
 import asyncio
+from enum import StrEnum
 
 import typer
-from enum import StrEnum
 from bs4 import BeautifulSoup
 
-from hotboard.core.types import HotItem, OutputFormat
-from hotboard.core.utils import http_get_text, format_items_json
 from hotboard.core.logger import logger
+from hotboard.core.types import HotItem, OutputFormat
+from hotboard.core.utils import format_items_json, http_get_text
 
 PLATFORM_NAME = "GitHub"
 
@@ -52,7 +52,12 @@ async def fetch(trend_type: str = "daily") -> list[HotItem]:
     for article in soup.find_all("article", class_="Box-row"):
         # 仓库标题和链接
         repo_h2 = article.find("h2")
+        if not repo_h2:
+            continue
+
         repo_anchor = repo_h2.find("a")
+        if not repo_anchor:
+            continue
 
         # 处理 "owner / repo" 格式
         full_name_text = (
@@ -62,7 +67,10 @@ async def fetch(trend_type: str = "daily") -> list[HotItem]:
         owner = parts[0] if len(parts) > 0 else ""
         repo_name = parts[1] if len(parts) > 1 else ""
 
-        repo_url: str = "https://github.com" + repo_anchor.get("href", "")
+        href = repo_anchor.get("href")
+        if not href or not isinstance(href, str):
+            continue
+        repo_url: str = f"https://github.com{href}"
 
         # 仓库描述
         desc_el = article.find("p", class_="col-9")
@@ -73,10 +81,12 @@ async def fetch(trend_type: str = "daily") -> list[HotItem]:
         language: str | None = lang_el.get_text(strip=True) if lang_el else None
 
         # Stars 和 Forks
-        stars_anchor = article.find("a", href=lambda x: x and x.endswith("/stargazers"))
+        stars_anchor = article.find(
+            "a", href=lambda x: isinstance(x, str) and x.endswith("/stargazers")
+        )
         stars: str | None = stars_anchor.get_text(strip=True) if stars_anchor else None
 
-        forks_anchor = article.find("a", href=lambda x: x and x.endswith("/forks"))
+        forks_anchor = article.find("a", href=lambda x: isinstance(x, str) and x.endswith("/forks"))
         forks: str | None = forks_anchor.get_text(strip=True) if forks_anchor else None
 
         # 构建标题

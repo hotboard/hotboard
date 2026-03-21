@@ -1,8 +1,11 @@
 import asyncio
+from typing import Any
+
 import typer
+
+from hotboard.core.logger import logger
 from hotboard.core.types import HotItem, OutputFormat
 from hotboard.core.utils import format_items_json, get_time, http_get
-from hotboard.core.logger import logger
 
 PLATFORM_NAME = "澎湃新闻"
 
@@ -10,11 +13,11 @@ PLATFORM_NAME = "澎湃新闻"
 async def fetch() -> list[HotItem]:
     """获取澎湃新闻热榜"""
     url: str = "https://cache.thepaper.cn/contentapi/wwwIndex/rightSidebar"
-    data: dict[str, any] = await http_get(url)
-    hot_news: list[dict[str, any]] = data.get("data", {}).get("hotNews", [])
+    data: dict[str, Any] = await http_get(url)
+    hot_news: list[dict[str, Any]] = data.get("data", {}).get("hotNews", [])
     items: list[HotItem] = []
     for item in hot_news:
-        cont_id: str = item.get("contId")
+        cont_id: str = item.get("contId", "")
         hot_item: HotItem = HotItem(
             id=cont_id,
             title=item.get("name"),

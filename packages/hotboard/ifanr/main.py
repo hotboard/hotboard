@@ -1,10 +1,11 @@
 import asyncio
+from typing import Any
 
 import typer
 
-from hotboard.core.types import HotItem, OutputFormat
-from hotboard.core.utils import http_get, get_time, format_items_json
 from hotboard.core.logger import logger
+from hotboard.core.types import HotItem, OutputFormat
+from hotboard.core.utils import format_items_json, get_time, http_get
 
 PLATFORM_NAME = "爱范儿"
 
@@ -13,7 +14,7 @@ async def fetch() -> list[HotItem]:
     """获取爱范儿快讯"""
     url: str = "https://sso.ifanr.com/api/v5/wp/buzz/?limit=20&offset=0"
 
-    result: dict[str, any] = await http_get(url)
+    result: dict[str, Any] = await http_get(url)
 
     items: list[HotItem] = []
     for item in result["objects"]:

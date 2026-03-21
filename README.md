@@ -19,33 +19,43 @@ Hotboard 是一个统一的热榜数据获取工具，支持 47+ 个平台的热
 ## 📋 支持的平台
 
 ### 综合资讯
+
 百度热搜、微博热搜、知乎热榜、腾讯新闻、新浪、新浪新闻、澎湃新闻、网易新闻
 
 ### 视频娱乐
+
 B 站、抖音、快手、AcFun
 
 ### 科技媒体
+
 36kr、虎嗅、极客公园、爱范儿、少数派、IT 之家、数字尾巴
 
 ### 开发者社区
+
 GitHub Trending、Hacker News、掘金、CSDN、V2EX、Linux.do、NodeSeek、HelloGitHub、51CTO、HostLoc
 
 ### 游戏社区
+
 NGA、LOL、米游社、游研社
 
 ### 体育社区
+
 虎扑
 
 ### 社交阅读
+
 豆瓣、贴吧、简书、果壳、新水木、微信读书
 
 ### 国际平台
+
 New York Times
 
 ### 实用工具
+
 地震速报、天气预警、历史上的今天
 
 ### 其他
+
 吾爱破解
 
 ## 🚀 快速开始
@@ -69,7 +79,7 @@ git clone https://github.com/hotboard/hotboard.git
 cd hotboard
 
 # 安装核心包
-pip install -e packages/hotboard/core
+pip install -e src
 
 # 安装特定平台
 pip install -e packages/hotboard/github
@@ -81,6 +91,7 @@ bash tests/install_all.sh
 ### 使用
 
 获取热榜数据（Markdown 格式）：
+
 ```bash
 hotboard-github
 hotboard-baidu
@@ -88,11 +99,13 @@ hotboard-zhihu
 ```
 
 获取 JSON 格式：
+
 ```bash
 hotboard-github --format json
 ```
 
 查看帮助：
+
 ```bash
 hotboard-github --help
 ```
@@ -106,31 +119,36 @@ Skills 位于独立仓库：[hotboard/hotboard-skills](https://github.com/hotboa
 ### 安装方式
 
 从 ClawHub 安装（推荐）：
+
 ```bash
 clawhub install hotboard-github
 clawhub install hotboard-baidu
 ```
 
 从 GitHub 安装：
+
 ```bash
 cd ~/.openclaw/skills/
 git clone https://github.com/hotboard/hotboard-skills
 ```
 
 ### 使用示例
+
 - "帮我看看 GitHub 上有什么热门项目"
 - "查看知乎热榜"
 - "推荐一些适合程序员的热榜平台"
 
 ## 📦 项目结构
 
-```
+```text
 hotboard/
-├── packages/hotboard/          # 所有平台包（发布到 PyPI）
-│   ├── core/                   # 核心库
+├── src/                        # 核心库源码
+│   └── hotboard/
+│       └── core/               # 核心库
+├── packages/hotboard/          # 平台包（发布到 PyPI）
 │   ├── github/                 # GitHub 平台
 │   ├── baidu/                  # 百度平台
-│   └── ...                     # 其他 46 个平台
+│   └── ...                     # 其他 45 个平台
 ├── tests/                      # 测试和安装脚本
 ├── scripts/                    # 发布脚本
 ├── DEVELOPMENT.md              # 开发规范
@@ -143,20 +161,23 @@ hotboard/
 查看 [DEVELOPMENT.md](DEVELOPMENT.md) 了解开发规范。
 
 安装开发依赖：
+
 ```bash
 bash tests/install_dev.sh
 ```
 
 运行测试：
+
 ```bash
 pytest tests/
 ```
 
 代码检查：
+
 ```bash
 black .
 ruff check .
-pyright packages/hotboard/core
+pyright src
 ```
 
 ## 🤝 贡献

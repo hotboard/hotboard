@@ -1,8 +1,11 @@
 import asyncio
+from typing import Any
+
 import typer
-from hotboard.core.types import HotItem, OutputFormat
-from hotboard.core.utils import http_get, format_items_json
+
 from hotboard.core.logger import logger
+from hotboard.core.types import HotItem, OutputFormat
+from hotboard.core.utils import format_items_json, http_get
 
 PLATFORM_NAME = "稀土掘金"
 
@@ -13,12 +16,12 @@ async def get_categories() -> dict[str, str]:
     headers: dict[str, str] = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
     }
-    result: dict[str, any] = await http_get(url, headers)
-    data_list: list[dict[str, any]] = result.get("data", [])
+    result: dict[str, Any] = await http_get(url, headers)
+    data_list: list[dict[str, Any]] = result.get("data", [])
     categories: dict[str, str] = {"1": "综合"}
     for item in data_list:
-        category_id: str = item.get("category_id")
-        category_name: str = item.get("category_name")
+        category_id: str | None = item.get("category_id")
+        category_name: str | None = item.get("category_name")
         if category_id and category_name:
             categories[category_id] = category_name
     return categories
@@ -32,14 +35,14 @@ async def fetch(category_id: str = "1") -> list[HotItem]:
     headers: dict[str, str] = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
     }
-    result: dict[str, any] = await http_get(url, headers)
-    data_list: list[dict[str, any]] = result.get("data", [])
+    result: dict[str, Any] = await http_get(url, headers)
+    data_list: list[dict[str, Any]] = result.get("data", [])
     items: list[HotItem] = []
     for item in data_list:
-        content: dict[str, any] = item.get("content", {})
-        author: dict[str, any] = item.get("author", {})
-        content_counter: dict[str, any] = item.get("content_counter", {})
-        content_id: str = content.get("content_id")
+        content: dict[str, Any] = item.get("content", {})
+        author: dict[str, Any] = item.get("author", {})
+        content_counter: dict[str, Any] = item.get("content_counter", {})
+        content_id: str | None = content.get("content_id")
         hot_item: HotItem = HotItem(
             id=content_id,
             title=content.get("title"),

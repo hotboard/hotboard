@@ -18,7 +18,7 @@ class HotItem:
     desc: str | None = None
     author: str | None = None
     time: str | None = None
-    hot: str | None = None
+    hot: int | str | None = None
     cover: str | None = None
     url: str | None = None
     mobile_url: str | None = None

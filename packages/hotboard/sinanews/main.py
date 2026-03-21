@@ -1,12 +1,14 @@
 import asyncio
 import json
-import typer
 from datetime import datetime
 from enum import StrEnum
-from typing import TypedDict
+from typing import Any, TypedDict
+
+import typer
+
+from hotboard.core.logger import logger
 from hotboard.core.types import HotItem, OutputFormat
 from hotboard.core.utils import format_items_json, get_time, http_get_text
-from hotboard.core.logger import logger
 
 PLATFORM_NAME = "新浪新闻"
 
@@ -50,7 +52,7 @@ RANK_CONFIGS: dict[str, RankConfig] = {
 }
 
 
-def parse_jsonp(data: str) -> dict[str, any]:
+def parse_jsonp(data: str) -> dict[str, Any]:
     """解析 JSONP 数据"""
     prefix: str = "var data = "
     json_str: str = data[len(prefix) :].strip().rstrip(";")
@@ -65,11 +67,11 @@ async def fetch(rank_type: str = "1") -> list[HotItem]:
         f"https://top.{config['www']}.sina.com.cn/ws/GetTopDataList.php?top_type=day&top_cat={config['params']}&top_time={date_str}&top_show_num=50"
     )
     text: str = await http_get_text(url)
-    data: dict[str, any] = parse_jsonp(text)
-    item_list: list[dict[str, any]] = data.get("data", [])
+    data: dict[str, Any] = parse_jsonp(text)
+    item_list: list[dict[str, Any]] = data.get("data", [])
     items: list[HotItem] = []
     for item in item_list:
-        item_url: str = item.get("url")
+        item_url: str = item.get("url", "")
         hot_item: HotItem = HotItem(
             id=item.get("id"),
             title=item.get("title"),

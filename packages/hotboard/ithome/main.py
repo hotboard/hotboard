@@ -1,13 +1,13 @@
 import asyncio
 import re
-import typer
 from enum import StrEnum
 
+import typer
 from bs4 import BeautifulSoup
 
-from hotboard.core.types import HotItem, OutputFormat
-from hotboard.core.utils import http_get_text, format_items_json
 from hotboard.core.logger import logger
+from hotboard.core.types import HotItem, OutputFormat
+from hotboard.core.utils import format_items_json, http_get_text
 
 PLATFORM_NAME = "IT 之家"
 
@@ -25,8 +25,10 @@ RANK_CONFIGS: dict[str, str] = {
 }
 
 
-def replace_link_hot(url: str, get_id: bool = False) -> str:
+def replace_link_hot(url: str | None, get_id: bool = False) -> str | None:
     """处理热榜链接"""
+    if not url:
+        return None
     match = re.search(r"[html|live]/(\d+)\.htm", url)
     if match:
         article_id: str = match.group(1)
@@ -36,8 +38,10 @@ def replace_link_hot(url: str, get_id: bool = False) -> str:
     return url
 
 
-def replace_link_xijiayi(url: str, get_id: bool = False) -> str:
+def replace_link_xijiayi(url: str | None, get_id: bool = False) -> str | None:
     """处理喜加一链接"""
+    if not url:
+        return None
     match = re.search(r"https://www\.ithome\.com/0/(\d+)/(\d+)\.htm", url)
     if match:
         part1: str = match.group(1)
@@ -57,21 +61,25 @@ async def fetch_hot() -> list[HotItem]:
 
     items: list[HotItem] = []
     for item in list_dom:
-        href: str | None = item.select_one("a")["href"] if item.select_one("a") else None
-        title: str = (
-            item.select_one(".plc-title").get_text(strip=True)
-            if item.select_one(".plc-title")
-            else ""
-        )
-        cover_tag = item.select_one("img")
-        cover: str | None = cover_tag.get("data-original") if cover_tag else None
-        time_tag = item.select_one("span.post-time")
-        time_text: str = time_tag.get_text(strip=True) if time_tag else ""
-        review_tag = item.select_one(".review-num")
-        review_text: str = review_tag.get_text(strip=True) if review_tag else None
+        a_tag = item.select_one("a")
+        href_attr = a_tag.get("href") if a_tag else None
+        href: str | None = str(href_attr) if href_attr and isinstance(href_attr, str) else None
 
-        article_id: str = replace_link_hot(href, True) if href else None
-        url_pc: str = replace_link_hot(href) if href else None
+        title_tag = item.select_one(".plc-title")
+        title: str | None = title_tag.get_text(strip=True) if title_tag else None
+
+        cover_tag = item.select_one("img")
+        cover_attr = cover_tag.get("data-original") if cover_tag else None
+        cover: str | None = str(cover_attr) if cover_attr and isinstance(cover_attr, str) else None
+
+        time_tag = item.select_one("span.post-time")
+        time_text: str | None = time_tag.get_text(strip=True) if time_tag else None
+
+        review_tag = item.select_one(".review-num")
+        review_text: str | None = review_tag.get_text(strip=True) if review_tag else None
+
+        article_id: str | None = replace_link_hot(href, True)
+        url_pc: str | None = replace_link_hot(href)
 
         hot_item: HotItem = HotItem(
             id=article_id,
@@ -96,30 +104,32 @@ async def fetch_xijiayi() -> list[HotItem]:
 
     items: list[HotItem] = []
     for item in list_dom:
-        href: str | None = item.select_one("a")["href"] if item.select_one("a") else None
-        title: str = (
-            item.select_one(".newsbody h2").get_text(strip=True)
-            if item.select_one(".newsbody h2")
-            else ""
-        )
-        desc: str | None = (
-            item.select_one(".newsbody p").get_text(strip=True)
-            if item.select_one(".newsbody p")
-            else None
-        )
+        a_tag = item.select_one("a")
+        href_attr = a_tag.get("href") if a_tag else None
+        href: str | None = str(href_attr) if href_attr and isinstance(href_attr, str) else None
+
+        title_tag = item.select_one(".newsbody h2")
+        title: str | None = title_tag.get_text(strip=True) if title_tag else None
+
+        desc_tag = item.select_one(".newsbody p")
+        desc: str | None = desc_tag.get_text(strip=True) if desc_tag else None
+
         cover_tag = item.select_one("img")
-        cover: str | None = cover_tag.get("data-original") if cover_tag else None
+        cover_attr = cover_tag.get("data-original") if cover_tag else None
+        cover: str | None = str(cover_attr) if cover_attr and isinstance(cover_attr, str) else None
+
+        time_str: str | None = None
         time_tag = item.select_one("span.time")
         if time_tag:
-            script_content = str(time_tag)  # 转成字符串
+            script_content = str(time_tag)
             match = re.search(r"'([^']+)'", script_content)
-            time_str = match.group(1) if match else ""
+            time_str = match.group(1) if match else None
 
         comment_tag = item.select_one(".comment")
-        comment_text: str = comment_tag.get_text(strip=True) if comment_tag else ""
+        comment_text: str | None = comment_tag.get_text(strip=True) if comment_tag else None
 
-        article_id: str = replace_link_xijiayi(href, True) if href else None
-        url_mobile: str = replace_link_xijiayi(href) if href else None
+        article_id: str | None = replace_link_xijiayi(href, True)
+        url_mobile: str | None = replace_link_xijiayi(href)
 
         hot_item: HotItem = HotItem(
             id=article_id,

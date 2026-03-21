@@ -80,10 +80,10 @@ async def fetch(rank_type: str = "default") -> list[HotItem]:
     headers: dict[str, str] = {"User-Agent": "..."}
     
     # 2. 发送 HTTP 请求
-    result: dict[str, any] = await http_get(url, headers)
+    result: dict[str, Any] = await http_get(url, headers)
     
     # 3. 解析响应数据
-    raw_items: list[dict[str, any]] = result.get("data", [])
+    raw_items: list[dict[str, Any]] = result.get("data", [])
     
     # 4. 转换为标准 HotItem 格式
     items: list[HotItem] = []
@@ -103,6 +103,7 @@ async def fetch(rank_type: str = "default") -> list[HotItem]:
 ```
 
 **实现要点：**
+
 - 完整的类型注解
 - 使用 `dict.get()` 安全访问字段，避免 KeyError
 - 时间字段统一使用 `get_time()` 转换
@@ -146,6 +147,7 @@ def format_output(items: list[HotItem], type_name: str, format: OutputFormat) ->
 ```
 
 **实现要点：**
+
 - JSON 格式统一使用 `format_items_json()` 工具函数
 - Markdown 格式可根据平台特点自定义显示字段
 - 条件显示：仅当字段有值时才输出
@@ -167,6 +169,7 @@ def main(
 ```
 
 **实现要点：**
+
 - 使用 typer 进行参数解析
 - 参数类型使用枚举提供类型安全和自动补全
 - 使用 `asyncio.run()` 调用异步函数
@@ -177,7 +180,7 @@ def main(
 - 所有函数参数和返回值必须有完整的类型注解
 - 局部变量建议添加类型注解以提高代码可读性
 - 使用 Python 3.9+ 原生类型：`list[str]` 而不是 `typing.List[str]`
-- 使用 `dict[str, any]` 表示 JSON 对象或动态字典
+- 使用 `dict[str, Any]` 表示 JSON 对象或动态字典
 - 使用 `StrEnum` 定义字符串枚举类型
 
 ## 7. 命名规范

@@ -1,12 +1,13 @@
 import asyncio
 from datetime import datetime, timedelta
+from enum import StrEnum
+from typing import Any
 
 import typer
-from enum import StrEnum
 
-from hotboard.core.types import HotItem, OutputFormat
-from hotboard.core.utils import http_get, get_time, format_items_json
 from hotboard.core.logger import logger
+from hotboard.core.types import HotItem, OutputFormat
+from hotboard.core.utils import format_items_json, get_time, http_get
 
 PLATFORM_NAME = "中国地震台"
 
@@ -49,7 +50,7 @@ async def fetch(days: int = 7, location_range: str = "1") -> list[HotItem]:
         "sec-ch-ua-platform": '"macOS"',
     }
 
-    result: dict[str, any] = await http_get(url, headers)
+    result: dict[str, Any] = await http_get(url, headers)
 
     items: list[HotItem] = []
     for item in result["data"]:

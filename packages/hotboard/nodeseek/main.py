@@ -1,9 +1,11 @@
 import asyncio
+
 import feedparser
 import typer
+
+from hotboard.core.logger import logger
 from hotboard.core.types import HotItem, OutputFormat
 from hotboard.core.utils import format_items_json, get_time, http_get_text
-from hotboard.core.logger import logger
 
 PLATFORM_NAME = "NodeSeek"
 
@@ -14,14 +16,14 @@ async def fetch() -> list[HotItem]:
     text: str = await http_get_text(url)
     feed: feedparser.util.FeedParserDict = feedparser.parse(text)
     items: list[HotItem] = []
-    for entry in feed.get("entries"):
-        link: str = entry.get("link")
+    for entry in feed.get("entries") or []:
+        link: str = str(entry.get("link"))
         hot_item: HotItem = HotItem(
-            id=entry.get("id"),
-            title=entry.get("title"),
-            desc=entry.get("summary"),
-            author=entry.get("author"),
-            time=get_time(entry.get("published")),
+            id=str(entry.get("id")),
+            title=str(entry.get("title")),
+            desc=str(entry.get("summary")),
+            author=str(entry.get("author")),
+            time=get_time(str(entry.get("published"))),
             url=link,
             mobile_url=link,
         )

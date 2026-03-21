@@ -20,7 +20,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        pip install black ruff mypy
+        pip install black ruff
 
     - name: Check code formatting with Black
       run: |
@@ -33,5 +33,5 @@ jobs:
     - name: Type check with pyright
       run: |
         pip install pyright
-        pyright packages/hotboard/core
+        pyright src packages/hotboard
       continue-on-error: true

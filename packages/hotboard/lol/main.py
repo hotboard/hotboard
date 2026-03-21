@@ -1,9 +1,12 @@
 import asyncio
-import typer
+from typing import Any
 from urllib.parse import quote
-from hotboard.core.types import HotItem, OutputFormat
-from hotboard.core.utils import http_get, format_items_json, get_time
+
+import typer
+
 from hotboard.core.logger import logger
+from hotboard.core.types import HotItem, OutputFormat
+from hotboard.core.utils import format_items_json, get_time, http_get
 
 PLATFORM_NAME = "英雄联盟"
 
@@ -13,8 +16,8 @@ async def fetch() -> list[HotItem]:
     url: str = (
         "https://apps.game.qq.com/cmc/zmMcnTargetContentList?r0=json&page=1&num=30&target=24&source=web_pc"
     )
-    data: dict[str, any] = await http_get(url)
-    result_list: list[dict[str, any]] = data.get("data", {}).get("result", [])
+    data: dict[str, Any] = await http_get(url)
+    result_list: list[dict[str, Any]] = data.get("data", {}).get("result", [])
     items: list[HotItem] = []
     for item in result_list:
         doc_id: str = item.get("iDocID", "")

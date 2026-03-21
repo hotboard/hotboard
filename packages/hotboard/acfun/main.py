@@ -1,11 +1,12 @@
 import asyncio
+from enum import StrEnum
+from typing import Any
 
 import typer
-from enum import StrEnum
 
-from hotboard.core.types import HotItem, OutputFormat
-from hotboard.core.utils import http_get, get_time, format_items_json
 from hotboard.core.logger import logger
+from hotboard.core.types import HotItem, OutputFormat
+from hotboard.core.utils import format_items_json, get_time, http_get
 
 PLATFORM_NAME = "AcFun"
 
@@ -69,7 +70,7 @@ async def fetch(channel_type: str = "-1", time_range: str = "DAY") -> list[HotIt
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
     }
 
-    result: dict[str, any] = await http_get(url, headers)
+    result: dict[str, Any] = await http_get(url, headers)
 
     items: list[HotItem] = []
     for item in result.get("rankList", []):

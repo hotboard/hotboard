@@ -1,10 +1,13 @@
 import asyncio
 import json
-import typer
+from typing import Any
 from urllib.parse import unquote
-from hotboard.core.types import HotItem, OutputFormat
-from hotboard.core.utils import http_get_text, format_items_json
+
+import typer
+
 from hotboard.core.logger import logger
+from hotboard.core.types import HotItem, OutputFormat
+from hotboard.core.utils import format_items_json, http_get_text
 
 PLATFORM_NAME = "快手"
 APOLLO_STATE_PREFIX: str = "window.__APOLLO_STATE__="
@@ -33,9 +36,9 @@ async def fetch() -> list[HotItem]:
     raw: str = script_slice[:cut_index].strip().rstrip(";")
     last_brace: int = raw.rfind("}")
     clean_raw: str = raw[: last_brace + 1] if last_brace != -1 else raw
-    json_object: dict[str, any] = json.loads(clean_raw)
-    default_client: dict[str, any] = json_object.get("defaultClient", {})
-    all_items: list[dict[str, any]] = default_client.get(
+    json_object: dict[str, Any] = json.loads(clean_raw)
+    default_client: dict[str, Any] = json_object.get("defaultClient", {})
+    all_items: list[dict[str, Any]] = default_client.get(
         '$ROOT_QUERY.visionHotRank({"page":"home"})', {}
     ).get("items", []) or default_client.get(
         '$ROOT_QUERY.visionHotRank({"page":"home","platform":"web"})', {}
@@ -44,10 +47,16 @@ async def fetch() -> list[HotItem]:
     )
     items: list[HotItem] = []
     for item in all_items:
-        item_id: str = item.get("id")
-        hot_item_data: dict[str, any] = default_client.get(item_id, {})
-        photo_id: str = hot_item_data.get("photoIds").get("json")[0]
-        poster: str = hot_item_data.get("poster")
+        item_id: str = item.get("id", "")
+        hot_item_data: dict[str, Any] = default_client.get(item_id, {})
+        photo_ids = hot_item_data.get("photoIds")
+        if not photo_ids:
+            continue
+        photo_json = photo_ids.get("json")
+        if not photo_json or not isinstance(photo_json, list) or len(photo_json) == 0:
+            continue
+        photo_id: str = photo_json[0]
+        poster: str = hot_item_data.get("poster", "")
         hot_item: HotItem = HotItem(
             id=hot_item_data.get("id"),
             title=hot_item_data.get("name"),

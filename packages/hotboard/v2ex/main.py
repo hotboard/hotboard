@@ -1,9 +1,12 @@
 import asyncio
-import typer
 from enum import StrEnum
-from hotboard.core.types import HotItem, OutputFormat
-from hotboard.core.utils import format_items_json, http_get, get_time
+from typing import Any
+
+import typer
+
 from hotboard.core.logger import logger
+from hotboard.core.types import HotItem, OutputFormat
+from hotboard.core.utils import format_items_json, get_time, http_get
 
 PLATFORM_NAME = "V2EX"
 
@@ -24,19 +27,18 @@ TOPIC_NAMES: dict[str, str] = {
 async def fetch(topic_type: str = "hot") -> list[HotItem]:
     """获取 V2EX 主题榜"""
     url: str = f"https://www.v2ex.com/api/topics/{topic_type}.json"
-    data: list[dict[str, any]] = await http_get(url)
+    data: list[dict[str, Any]] = await http_get(url)
     items: list[HotItem] = []
     for item in data:
-        url_str: str = item.get("url")
         hot_item: HotItem = HotItem(
             id=item.get("id"),
             title=item.get("title"),
             desc=item.get("content"),
-            author=item.get("member").get("username"),
-            time=get_time(item.get("created")),
+            author=item.get("member", {}).get("username"),
+            time=get_time(item.get("created", "")),
             hot=item.get("replies"),
-            url=url_str,
-            mobile_url=url_str,
+            url=item.get("url"),
+            mobile_url=item.get("url"),
         )
         items.append(hot_item)
     return items

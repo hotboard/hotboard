@@ -1,11 +1,12 @@
 import asyncio
 import json
+from typing import Any
 
 import typer
 
-from hotboard.core.types import HotItem, OutputFormat
-from hotboard.core.utils import http_get_text, get_time, format_items_json
 from hotboard.core.logger import logger
+from hotboard.core.types import HotItem, OutputFormat
+from hotboard.core.utils import format_items_json, get_time, http_get_text
 
 PLATFORM_NAME = "抖音"
 
@@ -25,7 +26,7 @@ async def fetch() -> list[HotItem]:
 
     text: str = await http_get_text(url, headers)
 
-    result: dict[str, any] = json.loads(text)
+    result: dict[str, Any] = json.loads(text)
     items: list[HotItem] = []
     for item in result.get("data", {}).get("word_list", []):
         sentence_id: str = item.get("sentence_id")

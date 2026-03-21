@@ -1,12 +1,12 @@
 import asyncio
+from enum import StrEnum
 
 import feedparser
 import typer
-from enum import StrEnum
 
-from hotboard.core.types import HotItem, OutputFormat
-from hotboard.core.utils import http_get_text, get_time, format_items_json
 from hotboard.core.logger import logger
+from hotboard.core.types import HotItem, OutputFormat
+from hotboard.core.utils import format_items_json, get_time, http_get_text
 
 PLATFORM_NAME = "吾爱破解"
 
@@ -39,14 +39,15 @@ async def fetch(list_type: str = "digest") -> list[HotItem]:
     # 解析 RSS
     feed: feedparser.util.FeedParserDict = feedparser.parse(content)
     items: list[HotItem] = []
-    for entry in feed.get("entries"):
+    for entry in feed.get("entries") or []:
+        link: str = str(entry.get("link"))
         hot_item: HotItem = HotItem(
-            title=entry.get("title"),
-            desc=entry.get("summary"),
-            author=entry.get("author"),
-            time=get_time(entry.get("published")),
-            url=entry.get("link"),
-            mobile_url=entry.get("link"),
+            title=str(entry.get("title")),
+            desc=str(entry.get("summary")),
+            author=str(entry.get("author")),
+            time=get_time(str(entry.get("published"))),
+            url=link,
+            mobile_url=link,
         )
         items.append(hot_item)
     return items

@@ -1,9 +1,12 @@
 import asyncio
-import typer
 from enum import StrEnum
-from hotboard.core.types import HotItem, OutputFormat
-from hotboard.core.utils import http_get, format_items_json, get_time
+from typing import Any
+
+import typer
+
 from hotboard.core.logger import logger
+from hotboard.core.types import HotItem, OutputFormat
+from hotboard.core.utils import format_items_json, get_time, http_get
 
 PLATFORM_NAME = "米游社"
 
@@ -50,17 +53,17 @@ async def fetch(game: str = "2", content_type: str = "3") -> list[HotItem]:
     url: str = (
         f"https://bbs-api-static.miyoushe.com/painter/wapi/getNewsList?client_type=4&gids={game}&last_id=&page_size=30&type={content_type}"
     )
-    data: dict[str, any] = await http_get(url)
-    item_list: list[dict[str, any]] = data.get("data", {}).get("list", [])
+    data: dict[str, Any] = await http_get(url)
+    item_list: list[dict[str, Any]] = data.get("data", {}).get("list", [])
     items: list[HotItem] = []
     for item in item_list:
-        post: dict[str, any] = item.get("post", {})
-        post_id: str = post.get("post_id")
+        post: dict[str, Any] = item.get("post", {})
+        post_id: str = post.get("post_id", "")
         hot_item: HotItem = HotItem(
             id=post_id,
             title=post.get("subject"),
             desc=post.get("content"),
-            cover=post.get("cover") or post.get("images")[0],
+            cover=post.get("cover") or post.get("images", [])[0],
             time=get_time(post.get("created_at")),
             url=f"https://www.miyoushe.com/ys/article/{post_id}",
             mobile_url=f"https://m.miyoushe.com/ys/#/article/{post_id}",

@@ -8,7 +8,7 @@ assignees: ''
 
 ## 平台信息
 
-- 平台名称: [例如：知乎]
+- 平台名称：[例如：知乎]
 - 平台 URL: [例如：https://www.zhihu.com]
 - 热榜 URL: [例如：https://www.zhihu.com/hot]
 

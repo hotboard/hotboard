@@ -4,20 +4,23 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "hotboard-core"
-version = "0.1.0"
+version = "0.0.1"
 description = "Hotboard 核心库"
 requires-python = ">=3.12"
 dependencies = [
-    "aiohttp>=3.9.0"
+    "aiohttp",
 ]
 authors = [
     {name = "llnancy"}
 ]
-license = {text = "Apache-2.0"}
+license = "Apache-2.0"
+readme = "README.md"
+
+[project.urls]
+Homepage = "https://github.com/hotboard/hotboard"
+Repository = "https://github.com/hotboard/hotboard"
+Issues = "https://github.com/hotboard/hotboard/issues"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["hotboard.core*"]
-
-[tool.setuptools.package-dir]
-"hotboard.core" = "."
+include = ["hotboard*"]

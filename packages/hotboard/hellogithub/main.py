@@ -1,11 +1,12 @@
 import asyncio
+from enum import StrEnum
+from typing import Any
 
 import typer
-from enum import StrEnum
 
-from hotboard.core.types import HotItem, OutputFormat
-from hotboard.core.utils import http_get, get_time, format_items_json
 from hotboard.core.logger import logger
+from hotboard.core.types import HotItem, OutputFormat
+from hotboard.core.utils import format_items_json, get_time, http_get
 
 PLATFORM_NAME = "HelloGitHub"
 
@@ -27,7 +28,7 @@ async def fetch(sort: str = "featured") -> list[HotItem]:
     """获取 HelloGitHub 热门仓库"""
     url: str = f"https://abroad.hellogithub.com/v1/?sort_by={sort}&tid=&page=1"
 
-    result: dict[str, any] = await http_get(url)
+    result: dict[str, Any] = await http_get(url)
 
     items: list[HotItem] = []
     for item in result["data"]:

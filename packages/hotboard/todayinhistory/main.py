@@ -1,11 +1,14 @@
 import asyncio
 import json
-import typer
 from datetime import datetime
+from typing import Any
+
+import typer
 from bs4 import BeautifulSoup
-from hotboard.core.types import HotItem, OutputFormat
-from hotboard.core.utils import http_get_text, format_items_json
+
 from hotboard.core.logger import logger
+from hotboard.core.types import HotItem, OutputFormat
+from hotboard.core.utils import format_items_json, http_get_text
 
 PLATFORM_NAME = "历史上的今天"
 
@@ -18,21 +21,24 @@ async def fetch(month: int, day: int) -> list[HotItem]:
         f"https://baike.baidu.com/cms/home/eventsOnHistory/{month_str}.json?_={int(datetime.now().timestamp() * 1000)}"
     )
     text: str = await http_get_text(url)
-    result: dict[str, any] = json.loads(text)
-    month_data: dict[str, list[dict[str, any]]] = result.get(month_str, {})
-    data_list: list[dict[str, any]] = month_data.get(month_str + day_str, [])
+    result: dict[str, Any] = json.loads(text)
+    month_data: dict[str, list[dict[str, Any]]] = result.get(month_str, {})
+    data_list: list[dict[str, Any]] = month_data.get(month_str + day_str, [])
     items: list[HotItem] = []
     for item in data_list:
-        title: str = BeautifulSoup(item.get("title"), "html.parser").get_text().strip()
-        desc: str = BeautifulSoup(item.get("desc"), "html.parser").get_text().strip()
-        link: str = item.get("link")
+        title_html = item.get("title")
+        title: str = (
+            BeautifulSoup(title_html, "html.parser").get_text().strip() if title_html else ""
+        )
+        desc_html = item.get("desc")
+        desc: str = BeautifulSoup(desc_html, "html.parser").get_text().strip() if desc_html else ""
         hot_item: HotItem = HotItem(
             title=title,
             desc=desc,
             cover=item.get("pic_share") if item.get("cover") else None,
             author=item.get("year"),
-            url=link,
-            mobile_url=link,
+            url=item.get("link"),
+            mobile_url=item.get("link"),
         )
         items.append(hot_item)
     return items

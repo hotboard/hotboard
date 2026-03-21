@@ -1,10 +1,12 @@
 import asyncio
+
 import feedparser
 import typer
 from bs4 import BeautifulSoup
-from hotboard.core.types import HotItem, OutputFormat
-from hotboard.core.utils import http_get_text, format_items_json, get_time
+
 from hotboard.core.logger import logger
+from hotboard.core.types import HotItem, OutputFormat
+from hotboard.core.utils import format_items_json, get_time, http_get_text
 
 PLATFORM_NAME = "Linux.do"
 
@@ -20,24 +22,30 @@ async def fetch() -> list[HotItem]:
     feed = feedparser.parse(content)
     items: list[HotItem] = []
     for entry in feed.entries:
-        link: str = entry.get("link", "")
-        desc: str = (
-            entry.get("summary_detail", {}).get("value", "")
-            if hasattr(entry, "summary_detail")
-            else entry.get("summary", "")
+        link = entry.get("link")
+        link_str: str = str(link) if link else ""
+
+        summary_detail = entry.get("summary_detail")
+        desc_value = (
+            summary_detail.get("value")
+            if summary_detail and isinstance(summary_detail, dict)
+            else None
         )
+        summary = entry.get("summary")
+        desc: str | None = str(desc_value) if desc_value else (str(summary) if summary else None)
+
         if desc:
             soup = BeautifulSoup(desc, "html.parser")
             desc = soup.get_text(separator=" ", strip=True)
-        pub_date: str = entry.get("published", "")
+
         hot_item: HotItem = HotItem(
-            id=entry.get("id", link),
-            title=entry.get("title"),
+            id=str(entry.get("id", link_str)),
+            title=str(entry.get("title")),
             desc=desc,
-            author=entry.get("author"),
-            time=get_time(pub_date) if pub_date else None,
-            url=link,
-            mobile_url=link,
+            author=str(entry.get("author")),
+            time=get_time(str(entry.get("published"))),
+            url=link_str,
+            mobile_url=link_str,
         )
         items.append(hot_item)
     return items

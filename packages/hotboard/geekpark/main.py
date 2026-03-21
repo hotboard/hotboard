@@ -1,10 +1,11 @@
 import asyncio
+from typing import Any
 
 import typer
 
-from hotboard.core.types import HotItem, OutputFormat
-from hotboard.core.utils import http_get, get_time, format_items_json
 from hotboard.core.logger import logger
+from hotboard.core.types import HotItem, OutputFormat
+from hotboard.core.utils import format_items_json, get_time, http_get
 
 PLATFORM_NAME = "极客公园"
 
@@ -13,20 +14,20 @@ async def fetch() -> list[HotItem]:
     """获取极客公园热门文章"""
     url: str = "https://mainssl.geekpark.net/api/v2"
 
-    result: dict[str, any] = await http_get(url)
+    result: dict[str, Any] = await http_get(url)
 
     items: list[HotItem] = []
     for item in result["homepage_posts"]:
-        post: dict[str, any] = item.get("post", {})
+        post: dict[str, Any] = item.get("post", {})
 
-        post_id: str = post.get("id")
-        title: str = post.get("title")
-        abstract: str = post.get("abstract")
-        cover_url: str = post.get("cover_url")
-        views: int = post.get("views")
-        published_timestamp: int = post.get("published_timestamp")
+        post_id: str | None = post.get("id")
+        title: str | None = post.get("title")
+        abstract: str | None = post.get("abstract")
+        cover_url: str | None = post.get("cover_url")
+        views: int | None = post.get("views")
+        published_timestamp: int | None = post.get("published_timestamp")
 
-        authors: list[dict[str, any]] | None = post.get("authors")
+        authors: list[dict[str, Any]] | None = post.get("authors")
         author: str | None = None
         if authors and len(authors) > 0:
             author = authors[0].get("nickname")

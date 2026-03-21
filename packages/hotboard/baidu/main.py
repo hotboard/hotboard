@@ -1,13 +1,14 @@
 import asyncio
-import re
 import json
+import re
+from enum import StrEnum
+from typing import Any
 
 import typer
-from enum import StrEnum
 
-from hotboard.core.types import HotItem, OutputFormat
-from hotboard.core.utils import http_get_text, format_items_json
 from hotboard.core.logger import logger
+from hotboard.core.types import HotItem, OutputFormat
+from hotboard.core.utils import format_items_json, http_get_text
 
 PLATFORM_NAME = "百度"
 
@@ -51,14 +52,14 @@ async def fetch(search_type: str = "realtime") -> list[HotItem]:
         logger.warning("未找到热搜数据")
         return []
 
-    s_data: dict[str, any] = json.loads(match.group(1))
+    s_data: dict[str, Any] = json.loads(match.group(1))
     logger.debug(f"hotboard-baidu s_data: {json.dumps(s_data, ensure_ascii=False)}")
     # 提取 cards 内容
-    cards: list[dict[str, any]] = s_data.get("data", {}).get("cards", [])
+    cards: list[dict[str, Any]] = s_data.get("data", {}).get("cards", [])
     if not cards:
         return []
 
-    card_content: list[any] = cards[0].get("content", [])
+    card_content: list[Any] = cards[0].get("content", [])
 
     items: list[HotItem] = []
     for item in card_content:

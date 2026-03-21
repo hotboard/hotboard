@@ -4,18 +4,18 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "hotboard-linuxdo"
-version = "0.1.0"
+version = "0.0.1"
 description = "Linux.do 热门文章"
 requires-python = ">=3.12"
 dependencies = [
-    "hotboard-core>=0.1.0",
+    "hotboard-core>=0.0.1",
     "typer",
 ]
 authors = [
     {name = "llnancy"}
 ]
-license = {text = "Apache-2.0"}
-
+license = "Apache-2.0"
+readme = "README.md"
 
 [project.urls]
 Homepage = "https://github.com/hotboard/hotboard"
@@ -23,11 +23,7 @@ Repository = "https://github.com/hotboard/hotboard"
 Issues = "https://github.com/hotboard/hotboard/issues"
 
 [project.scripts]
-hotboard-linuxdo = "hotboard.linuxdo.main:run"
+hotboard-linuxdo = "main:run"
 
-[tool.setuptools.packages.find]
-where = ["."]
-include = ["hotboard.linuxdo*"]
-
-[tool.setuptools.package-dir]
-"hotboard.linuxdo" = "."
+[tool.setuptools]
+py-modules = ["main"]

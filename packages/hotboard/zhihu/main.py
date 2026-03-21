@@ -1,9 +1,12 @@
 import asyncio
-import typer
 from enum import StrEnum
-from hotboard.core.types import HotItem, OutputFormat
-from hotboard.core.utils import http_get, get_time, format_items_json
+from typing import Any
+
+import typer
+
 from hotboard.core.logger import logger
+from hotboard.core.types import HotItem, OutputFormat
+from hotboard.core.utils import format_items_json, get_time, http_get
 
 PLATFORM_NAME = "知乎"
 
@@ -24,14 +27,14 @@ LIST_NAMES: dict[str, str] = {
 async def fetch_hot() -> list[HotItem]:
     """获取知乎热榜"""
     url: str = "https://api.zhihu.com/topstory/hot-lists/total?limit=50"
-    result: dict[str, any] = await http_get(url)
-    data_list: list[dict[str, any]] = result.get("data", [])
+    result: dict[str, Any] = await http_get(url)
+    data_list: list[dict[str, Any]] = result.get("data", [])
     items: list[HotItem] = []
     for item in data_list:
-        target: dict[str, any] = item.get("target", {})
+        target: dict[str, Any] = item.get("target", {})
         question_id: str = target.get("url", "").split("/")[-1]
         detail_text: str = item.get("detail_text", "")
-        children: list[dict[str, any]] = item.get("children", [])
+        children: list[dict[str, Any]] = item.get("children", [])
         hot_item: HotItem = HotItem(
             id=target.get("id"),
             title=target.get("title"),
@@ -53,20 +56,19 @@ async def fetch_daily() -> list[HotItem]:
         "Referer": "https://daily.zhihu.com/api/4/news/latest",
         "Host": "daily.zhihu.com",
     }
-    result: dict[str, any] = await http_get(url, headers)
-    stories: list[dict[str, any]] = result.get("stories", [])
-    filtered_stories: list[dict[str, any]] = [s for s in stories if s.get("type") == 0]
+    result: dict[str, Any] = await http_get(url, headers)
+    stories: list[dict[str, Any]] = result.get("stories", [])
+    filtered_stories: list[dict[str, Any]] = [s for s in stories if s.get("type") == 0]
     items: list[HotItem] = []
     for item in filtered_stories:
         images: list[str] = item.get("images", [])
-        item_url: str = item.get("url")
         hot_item: HotItem = HotItem(
             id=item.get("id"),
             title=item.get("title"),
             cover=images[0] if images else None,
             author=item.get("hint"),
-            url=item_url,
-            mobile_url=item_url,
+            url=item.get("url"),
+            mobile_url=item.get("url"),
         )
         items.append(hot_item)
     return items

@@ -1,9 +1,12 @@
 import asyncio
-import typer
 from enum import StrEnum
+from typing import Any
+
+import typer
+
+from hotboard.core.logger import logger
 from hotboard.core.types import HotItem, OutputFormat
 from hotboard.core.utils import format_items_json, http_get
-from hotboard.core.logger import logger
 
 PLATFORM_NAME = "新浪网"
 
@@ -40,12 +43,12 @@ RANK_NAMES: dict[str, str] = {
 async def fetch(rank_type: str = "all") -> list[HotItem]:
     """获取新浪网热榜"""
     url: str = f"https://newsapp.sina.cn/api/hotlist?newsId=HB-1-snhs%2Ftop_news_list-{rank_type}"
-    data: dict[str, any] = await http_get(url)
-    hot_list: list[dict[str, any]] = data.get("data", {}).get("hotList", [])
+    data: dict[str, Any] = await http_get(url)
+    hot_list: list[dict[str, Any]] = data.get("data", {}).get("hotList", [])
     items: list[HotItem] = []
     for item in hot_list:
-        base_data: dict[str, any] = item.get("base", {}).get("base", {})
-        info_data: dict[str, any] = item.get("info", {})
+        base_data: dict[str, Any] = item.get("base", {}).get("base", {})
+        info_data: dict[str, Any] = item.get("info", {})
         item_url: str = base_data.get("url", "")
         hot_item: HotItem = HotItem(
             id=base_data.get("uniqueId"),

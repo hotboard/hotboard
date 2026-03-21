@@ -23,7 +23,7 @@ jobs:
 
     - name: Install core package
       run: |
-        pip install -e packages/hotboard/core
+        pip install -e src
 
     - name: Install test dependencies
       run: |

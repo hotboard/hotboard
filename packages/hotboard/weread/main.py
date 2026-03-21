@@ -1,10 +1,13 @@
 import asyncio
 import hashlib
-import typer
 from enum import StrEnum
+from typing import Any
+
+import typer
+
+from hotboard.core.logger import logger
 from hotboard.core.types import HotItem, OutputFormat
 from hotboard.core.utils import format_items_json, get_time, http_get
-from hotboard.core.logger import logger
 
 PLATFORM_NAME = "微信读书"
 
@@ -59,23 +62,21 @@ async def fetch(rank_type: str = "rising") -> list[HotItem]:
     headers: dict[str, str] = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 Edg/114.0.1823.67"
     }
-    data: dict[str, any] = await http_get(url, headers=headers)
-    books: list[dict[str, any]] = data.get("books", [])
+    data: dict[str, Any] = await http_get(url, headers=headers)
+    books: list[dict[str, Any]] = data.get("books", [])
     items: list[HotItem] = []
     for book_item in books:
-        book_info: dict[str, any] = book_item.get("bookInfo", {})
-        book_id: str = book_info.get("bookId")
-        cover: str = book_info.get("cover")
-        publish_time: str = book_info.get("publishTime")
+        book_info: dict[str, Any] = book_item.get("bookInfo", {})
+        book_id: str = book_info.get("bookId", "")
         weread_id: str = get_weread_id(book_id)
         hot_item: HotItem = HotItem(
             id=book_id,
             title=book_info.get("title"),
             desc=book_info.get("intro"),
-            cover=cover.replace("s_", "t9_") if cover else None,
+            cover=book_info.get("cover", "").replace("s_", "t9_"),
             author=book_info.get("author"),
             hot=book_item.get("readingCount"),
-            time=get_time(publish_time),
+            time=get_time(book_info.get("publishTime")),
             url=f"https://weread.qq.com/web/bookDetail/{weread_id}",
             mobile_url=f"https://weread.qq.com/web/bookDetail/{weread_id}",
         )
