@@ -24,6 +24,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 开发者社区：GitHub、掘金、V2EX、Linux.do、NodeSeek 等
 - 国际平台：Hacker News、New York Times 等
 - 游戏社区：NGA、LOL、米游社等
-- 其他：豆瓣、贴吧、简书、果壳、新水木等
+- 其他：豆瓣、贴吧、简书、果壳、水木社区等
 
 [Unreleased]: https://github.com/hotboard/hotboard/compare/v0.0.1...HEAD
