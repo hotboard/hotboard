@@ -3,9 +3,9 @@
 [![Test](https://github.com/hotboard/hotboard/actions/workflows/test.yml/badge.svg)](https://github.com/hotboard/hotboard/actions/workflows/test.yml)
 [![Lint](https://github.com/hotboard/hotboard/actions/workflows/lint.yml/badge.svg)](https://github.com/hotboard/hotboard/actions/workflows/lint.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
-[![Python](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![Python](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 
-Hotboard 是一个多平台热榜数据获取 CLI 工具，支持 46+ 个平台的热榜数据抓取。
+Hotboard 是一个多平台热榜数据获取工具，支持 46+ 个平台（百度、微博、知乎、B 站、GitHub、掘金等）。提供 CLI 命令和 OpenClaw Skill 集成。
 
 ## ✨ 特性
 
