@@ -5,7 +5,7 @@ import typer
 
 from hotboard.logger import logger
 from hotboard.types import HotItem, OutputFormat
-from hotboard.utils import format_items_json, get_time, http_get
+from hotboard.utils import format_items_json, http_get
 
 PLATFORM_NAME = "今日头条"
 
@@ -31,7 +31,7 @@ async def fetch() -> list[HotItem]:
 def format_output(items: list[HotItem], format: OutputFormat) -> str:
     """格式化输出"""
     if format == OutputFormat.JSON:
-        return format_items_json(PLATFORM_NAME, items)
+        return format_items_json(PLATFORM_NAME, items, "热榜")
     lines: list[str] = [
         f"# {PLATFORM_NAME}\n",
         f"**总数**: {len(items)} 条\n",
@@ -50,4 +50,4 @@ def main(
     """今日头条热榜"""
     items: list[HotItem] = asyncio.run(fetch())
     print(format_output(items, format))
-    logger.info(f"获取 [{PLATFORM_NAME}] 成功,共 {len(items)} 条")
+    logger.info(f"获取 [{PLATFORM_NAME}] 成功，共 {len(items)} 条")
