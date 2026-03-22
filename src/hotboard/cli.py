@@ -1,5 +1,6 @@
 import importlib
 import sys
+from importlib.metadata import version
 from pathlib import Path
 
 import typer
@@ -32,6 +33,9 @@ def cli():
             for name, desc in PLATFORMS.items():
                 typer.secho(f"  {name:15}", fg=typer.colors.GREEN, nl=False)
                 typer.secho(f" - {desc}", fg=typer.colors.BRIGHT_BLACK)
+            return
+        if cmd in ("--version", "-v"):
+            typer.echo(f"hotboard {version('hotboard')}")
             return
         if cmd in PLATFORMS:
             module = importlib.import_module(f"hotboard.platforms.{cmd}")
