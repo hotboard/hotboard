@@ -27,7 +27,7 @@
 
 ## 添加新平台
 
-1. 在 `packages/hotboard/` 目录下创建新的平台模块
+1. 在 `src/hotboard/platforms/` 目录下创建新的平台文件
 2. 遵循 `DEVELOPMENT.md` 中的开发规范
 3. 编写测试用例
 4. 更新文档
@@ -42,7 +42,7 @@
 
 ```bash
 # 安装开发依赖
-bash tests/install_dev.sh
+bash scripts/dev.sh
 
 # 运行测试
 pytest tests/

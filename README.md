@@ -3,18 +3,17 @@
 [![Test](https://github.com/hotboard/hotboard/actions/workflows/test.yml/badge.svg)](https://github.com/hotboard/hotboard/actions/workflows/test.yml)
 [![Lint](https://github.com/hotboard/hotboard/actions/workflows/lint.yml/badge.svg)](https://github.com/hotboard/hotboard/actions/workflows/lint.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
-[![Python](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
+[![Python](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 
-Hotboard 是一个统一的热榜数据获取工具，支持 47+ 个平台的热榜数据抓取。
+Hotboard 是一个多平台热榜数据获取 CLI 工具，支持 46+ 个平台的热榜数据抓取。
 
 ## ✨ 特性
 
 - 🎯 统一接口：所有平台使用相同的 CLI 命令格式
-- 📦 模块化设计：每个平台独立打包，按需安装
-- 🔄 多种输出格式：支持 JSON 和 Markdown 格式
+- � 多种输出格式：支持 JSON 和 Markdown 格式
 - 🚀 异步高效：基于 aiohttp 的异步请求
 - 🛠️ 类型安全：完整的类型注解支持
-- 🔌 OpenClaw 集成：可作为 OpenClaw skill 使用（[https://github.com/hotboard/hotboard-skills](https://github.com/hotboard/hotboard-skills)）
+- 🔌 OpenClaw 集成：可作为 OpenClaw skill 使用（[https://github.com/hotboard/hotboard-skill](https://github.com/hotboard/hotboard-skill)）
 
 ## 📋 支持的平台
 
@@ -65,10 +64,7 @@ New York Times
 从 PyPI 安装（推荐）：
 
 ```bash
-# 安装特定平台（会自动安装 core 依赖）
-pip install hotboard-github
-pip install hotboard-baidu
-pip install hotboard-zhihu
+pip install hotboard
 ```
 
 从源码安装（开发者）：
@@ -78,14 +74,8 @@ pip install hotboard-zhihu
 git clone https://github.com/hotboard/hotboard.git
 cd hotboard
 
-# 安装核心包
-pip install -e src
-
-# 安装特定平台
-pip install -e packages/hotboard/github
-
-# 或安装所有平台
-bash tests/install_all.sh
+# 安装
+pip install -e .
 ```
 
 ### 使用
@@ -93,43 +83,42 @@ bash tests/install_all.sh
 获取热榜数据（Markdown 格式）：
 
 ```bash
-hotboard-github
-hotboard-baidu
-hotboard-zhihu
+hotboard github
+hotboard baidu
+hotboard zhihu
 ```
 
 获取 JSON 格式：
 
 ```bash
-hotboard-github --format json
+hotboard github --format json
 ```
 
 查看帮助：
 
 ```bash
-hotboard-github --help
+hotboard github --help
 ```
 
 ## 🤖 OpenClaw 集成
 
 Hotboard 支持作为 OpenClaw skill 使用，实现自然语言交互。
 
-Skills 位于独立仓库：[hotboard/hotboard-skills](https://github.com/hotboard/hotboard-skills)
+Skill 位于独立仓库：[hotboard/hotboard-skill](https://github.com/hotboard/hotboard-skill)
 
 ### 安装方式
 
 从 ClawHub 安装（推荐）：
 
 ```bash
-clawhub install hotboard-github
-clawhub install hotboard-baidu
+clawhub install hotboard
 ```
 
 从 GitHub 安装：
 
 ```bash
 cd ~/.openclaw/skills/
-git clone https://github.com/hotboard/hotboard-skills
+git clone https://github.com/hotboard/hotboard-skill
 ```
 
 ### 使用示例
@@ -142,18 +131,19 @@ git clone https://github.com/hotboard/hotboard-skills
 
 ```text
 hotboard/
-├── src/                        # 核心库源码
-│   └── hotboard/
-│       └── core/               # 核心库
-├── packages/hotboard/          # 平台包（发布到 PyPI）
-│   ├── github/                 # GitHub 平台
-│   ├── baidu/                  # 百度平台
-│   └── ...                     # 其他 45 个平台
-├── tests/                      # 测试和安装脚本
-├── scripts/                    # 发布脚本
-├── DEVELOPMENT.md              # 开发规范
-├── CONTRIBUTING.md             # 贡献指南
-└── README.md                   # 本文件
+├── src/hotboard/
+│   ├── cli.py              # CLI 入口
+│   ├── logger.py           # 日志
+│   ├── types.py            # 数据类型
+│   ├── utils.py            # 工具函数
+│   └── platforms/          # 平台实现
+│       ├── github.py
+│       ├── baidu.py
+│       └── ...
+├── tests/                  # 测试
+├── DEVELOPMENT.md          # 开发规范
+├── CONTRIBUTING.md         # 贡献指南
+└── README.md               # 本文件
 ```
 
 ## 🔧 开发
@@ -163,7 +153,7 @@ hotboard/
 安装开发依赖：
 
 ```bash
-bash tests/install_dev.sh
+bash scripts/dev.sh
 ```
 
 运行测试：
@@ -186,7 +176,7 @@ pyright src
 
 ### 添加新平台
 
-1. 在 `packages/hotboard/` 下创建新平台目录
+1. 在 `src/hotboard/platforms/` 下创建新平台文件
 2. 遵循 [DEVELOPMENT.md](DEVELOPMENT.md) 中的规范
 3. 添加测试用例
 4. 提交 Pull Request
@@ -204,8 +194,8 @@ pyright src
 
 ## 🔗 相关链接
 
-- [PyPI 主页](https://pypi.org/search/?q=hotboard)
-- [Skills 仓库](https://github.com/hotboard/hotboard-skills)
+- [PyPI 主页](https://pypi.org/project/hotboard)
+- [Skill 仓库](https://github.com/hotboard/hotboard-skill)
 - [问题反馈](https://github.com/hotboard/hotboard/issues)
 - [更新日志](CHANGELOG.md)
 - [安全政策](SECURITY.md)

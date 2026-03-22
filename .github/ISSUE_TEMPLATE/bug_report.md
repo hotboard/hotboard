@@ -28,7 +28,7 @@ assignees: ''
 
 - Python 版本：[例如 3.12]
 - 操作系统：[例如 Ubuntu 22.04]
-- 包版本：[例如 hotboard-36kr==0.1.0]
+- 包版本：[例如 hotboard==0.0.1]
 
 ## 额外信息
 

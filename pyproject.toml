@@ -1,13 +1,40 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hotboard"
+version = "0.0.1"
+description = "多平台热榜数据获取 CLI 工具"
+requires-python = ">=3.10"
+dependencies = [
+    "aiohttp",
+    "typer",
+    "beautifulsoup4",
+    "lxml",
+]
+authors = [
+    {name = "llnancy"}
+]
+license = "Apache-2.0"
+readme = "README.md"
+
+[project.urls]
+Homepage = "https://github.com/hotboard/hotboard"
+Repository = "https://github.com/hotboard/hotboard"
+Issues = "https://github.com/hotboard/hotboard/issues"
+
+[project.scripts]
+hotboard = "hotboard.cli:cli"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["hotboard*"]
+
 [tool.black]
 line-length = 100
-target-version = ['py312']
+target-version = ['py310']
 
 [tool.ruff]
 line-length = 100
-target-version = "py312"
-
-[tool.mypy]
-python_version = "3.12"
-warn_return_any = true
-warn_unused_configs = true
-disallow_untyped_defs = true
+target-version = "py310"

@@ -13,9 +13,9 @@ import typer
 from typing import TypedDict
 from enum import StrEnum
 
-from hotboard.core.types import HotItem, OutputFormat
-from hotboard.core.utils import http_get, http_post, get_time, format_items_json
-from hotboard.core.logger import logger
+from hotboard.types import HotItem, OutputFormat
+from hotboard.utils import http_get, http_post, get_time, format_items_json
+from hotboard.logger import logger
 
 # 常量定义
 PLATFORM_NAME = "平台名称"
@@ -25,17 +25,6 @@ class RankType(StrEnum):
     """榜单类型枚举"""
     DEFAULT = "default"
     POPULAR = "popular"
-
-# 配置定义（可选，用于榜单配置映射）
-class RankConfig(TypedDict):
-    """榜单配置类型"""
-    name: str
-    endpoint: str
-
-RANK_CONFIGS: dict[str, RankConfig] = {
-    RankType.DEFAULT: {"name": "默认榜", "endpoint": "/api/default"},
-    RankType.POPULAR: {"name": "热门榜", "endpoint": "/api/popular"},
-}
 
 # 核心函数
 async def fetch(rank_type: str = "default") -> list[HotItem]:
@@ -49,17 +38,12 @@ def format_output(items: list[HotItem], type_name: str, format: OutputFormat) ->
 def main(...):
     """CLI 主函数"""
     ...
-
-def run():
-    """CLI 入口点"""
-    typer.run(main)
 ```
 
 ## 2. 常量定义
 
 - `PLATFORM_NAME`：平台名称，用于日志和输出标题
 - `RankType`：榜单类型枚举（可选，仅当平台有多个榜单时定义）
-- `RANK_CONFIGS`：榜单配置字典（可选，用于映射榜单类型到具体配置）
 
 ## 3. fetch 函数
 
@@ -179,8 +163,7 @@ def main(
 
 - 所有函数参数和返回值必须有完整的类型注解
 - 局部变量建议添加类型注解以提高代码可读性
-- 使用 Python 3.9+ 原生类型：`list[str]` 而不是 `typing.List[str]`
-- 使用 `dict[str, Any]` 表示 JSON 对象或动态字典
+- 使用 Python 3.10+ 原生类型：`list[str]`、`dict[str, Any]`、`X | None`
 - 使用 `StrEnum` 定义字符串枚举类型
 
 ## 7. 命名规范
@@ -206,24 +189,7 @@ def main(
 - 及时清理未使用的变量、import 语句和注释
 - 减少中间变量：对于只使用一次的变量，考虑内联
 
-## 10. 依赖配置
-
-每个平台模块的 `pyproject.toml` 应包含以下依赖：
-
-```toml
-[project]
-name = "hotboard-platform"
-version = "1.0.0"
-dependencies = [
-    "hotboard-core",
-    "typer",
-]
-
-[project.scripts]
-hotboard-platform = "hotboard.platform.main:run"
-```
-
-## 11. HTTP 请求工具
+## 10. HTTP 请求工具
 
 核心库提供了统一的 HTTP 请求工具：
 
@@ -232,32 +198,33 @@ hotboard-platform = "hotboard.platform.main:run"
 
 这些工具函数已处理常见错误和超时，直接使用即可。
 
-## 12. 时间处理
+## 11. 时间处理
 
 使用 `get_time()` 工具函数统一处理时间字段：
 
 ```python
-from hotboard.core.utils import get_time
+from hotboard.utils import get_time
 
 # 自动识别时间戳或时间字符串
 time_str = get_time(raw_data.get("publish_time"))
 ```
 
-## 13. 日志记录
+## 12. 日志记录
 
 使用统一的 logger 进行日志记录：
 
 ```python
-from hotboard.core.logger import logger
+from hotboard.logger import logger
 
 logger.info("操作成功")
 logger.warning("警告信息")
 logger.error("错误信息")
 ```
 
-## 14. 测试建议
+## 13. 测试建议
 
 - 每个平台模块应可独立运行和测试
-- 使用 `python -m hotboard.platform.main` 测试 CLI
+- 使用 `python -m hotboard.platforms.<platform>` 测试模块
+- 使用 `hotboard <platform>` 测试 CLI
 - 验证输出格式（JSON 和 Markdown）是否正确
 - 检查字段映射是否完整（id、title、url 等）

@@ -20,18 +20,18 @@ jobs:
 
     - name: Install dependencies
       run: |
-        pip install black ruff
+        pip install black ruff isort pyright
 
-    - name: Check code formatting with Black
+    - name: Check code formatting
       run: |
         black --check .
+        isort --check .
 
     - name: Lint with Ruff
       run: |
         ruff check .
 
-    - name: Type check with pyright
+    - name: Type check
       run: |
-        pip install pyright
-        pyright src packages/hotboard
+        pyright src
       continue-on-error: true
