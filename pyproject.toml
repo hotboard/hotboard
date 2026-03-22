@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "hotboard"
 version = "0.0.2"
-description = "多平台热榜数据获取 CLI 工具"
+description = "多平台热榜数据获取工具，聚合国内外主流资讯、社区、视频等平台热门内容"
 requires-python = ">=3.11"
 dependencies = [
     "aiohttp",

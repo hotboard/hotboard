@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 
-Hotboard 是一个多平台热榜数据获取工具，支持 46+ 个平台（百度、微博、知乎、B 站、GitHub、掘金等）。提供 CLI 命令和 OpenClaw Skill 集成。
+Hotboard 是一个多平台热榜数据获取工具，聚合国内外主流资讯、社区、视频等平台热门内容。提供 CLI 命令和 OpenClaw Skill 集成。
 
 ## ✨ 特性
 
@@ -19,7 +19,7 @@ Hotboard 是一个多平台热榜数据获取工具，支持 46+ 个平台（百
 
 ### 综合资讯
 
-百度热搜、微博热搜、知乎热榜、腾讯新闻、新浪、新浪新闻、澎湃新闻、网易新闻
+百度热搜、微博热搜、知乎热榜、今日头条、腾讯新闻、新浪、新浪新闻、澎湃新闻、网易新闻
 
 ### 视频娱乐
 
