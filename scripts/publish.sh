@@ -21,9 +21,9 @@ pytest tests/
 # 清理旧文件
 rm -rf dist build *.egg-info
 
-# 构建
+# 构建（临时取消代理）
 echo "构建包..."
-python -m build
+env -u HTTP_PROXY -u HTTPS_PROXY -u http_proxy -u https_proxy python -m build
 
 # 检查
 echo "检查包..."
@@ -31,6 +31,11 @@ twine check dist/*
 
 # 上传
 echo "上传到 PyPI..."
-twine upload dist/*
+if [ -n "$HTTPS_PROXY" ] || [ -n "$https_proxy" ]; then
+    twine upload dist/*
+else
+    echo "提示：如需使用代理，请设置 HTTPS_PROXY 环境变量"
+    twine upload dist/*
+fi
 
 echo "发布完成！"
