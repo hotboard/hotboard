@@ -50,7 +50,9 @@ CONTENT_NAMES: dict[str, str] = {
 
 async def fetch(game: str = "2", content_type: str = "3") -> list[HotItem]:
     """获取米游社榜单"""
-    url: str = f"https://bbs-api-static.miyoushe.com/painter/wapi/getNewsList?client_type=4&gids={game}&last_id=&page_size=30&type={content_type}"
+    url: str = (
+        f"https://bbs-api-static.miyoushe.com/painter/wapi/getNewsList?client_type=4&gids={game}&last_id=&page_size=30&type={content_type}"
+    )
     data: dict[str, Any] = await http_get(url)
     item_list: list[dict[str, Any]] = data.get("data", {}).get("list", [])
     items: list[HotItem] = []

@@ -13,7 +13,9 @@ PLATFORM_NAME = "英雄联盟"
 
 async def fetch() -> list[HotItem]:
     """获取英雄联盟更新公告"""
-    url: str = "https://apps.game.qq.com/cmc/zmMcnTargetContentList?r0=json&page=1&num=30&target=24&source=web_pc"
+    url: str = (
+        "https://apps.game.qq.com/cmc/zmMcnTargetContentList?r0=json&page=1&num=30&target=24&source=web_pc"
+    )
     data: dict[str, Any] = await http_get(url)
     result_list: list[dict[str, Any]] = data.get("data", {}).get("result", [])
     items: list[HotItem] = []

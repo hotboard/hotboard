@@ -4,14 +4,15 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "hotboard"
-version = "0.0.1"
+version = "0.0.2"
 description = "多平台热榜数据获取 CLI 工具"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 dependencies = [
     "aiohttp",
     "typer",
     "beautifulsoup4",
     "lxml",
+    "feedparser",
 ]
 authors = [
     {name = "llnancy"}
@@ -33,8 +34,8 @@ include = ["hotboard*"]
 
 [tool.black]
 line-length = 100
-target-version = ['py310']
+target-version = ['py311']
 
 [tool.ruff]
 line-length = 100
-target-version = "py310"
+target-version = "py311"

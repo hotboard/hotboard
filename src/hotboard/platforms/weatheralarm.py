@@ -13,7 +13,9 @@ PLATFORM_NAME = "中央气象台"
 
 async def fetch(province: str = "") -> list[HotItem]:
     """获取中央气象台气象预警"""
-    url: str = f"http://www.nmc.cn/rest/findAlarm?pageNo=1&pageSize=20&signaltype=&signallevel=&province={quote(province)}"
+    url: str = (
+        f"http://www.nmc.cn/rest/findAlarm?pageNo=1&pageSize=20&signaltype=&signallevel=&province={quote(province)}"
+    )
     data: dict[str, Any] = await http_get(url)
     alarm_list: list[dict[str, Any]] = data.get("data", {}).get("page", {}).get("list", [])
     items: list[HotItem] = []

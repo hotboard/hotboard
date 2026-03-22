@@ -46,7 +46,9 @@ CATEGORY_CONFIGS: dict[str, str] = {
 
 async def fetch(type_id: str = "0") -> list[HotItem]:
     """获取 B 站热门榜单"""
-    url: str = f"https://api.bilibili.com/x/web-interface/ranking?jsonp=jsonp?rid={type_id}&type=all&callback=__jp0"
+    url: str = (
+        f"https://api.bilibili.com/x/web-interface/ranking?jsonp=jsonp?rid={type_id}&type=all&callback=__jp0"
+    )
 
     headers: dict[str, str] = {
         "Referer": "https://www.bilibili.com",

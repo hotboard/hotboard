@@ -61,7 +61,9 @@ RANGE_CONFIGS: dict[str, str] = {
 async def fetch(channel_type: str = "-1", time_range: str = "DAY") -> list[HotItem]:
     """获取 AcFun 排行榜"""
     channel_id: str = "" if channel_type == "-1" else channel_type
-    url: str = f"https://www.acfun.cn/rest/pc-direct/rank/channel?channelId={channel_id}&rankLimit=30&rankPeriod={time_range}"
+    url: str = (
+        f"https://www.acfun.cn/rest/pc-direct/rank/channel?channelId={channel_id}&rankLimit=30&rankPeriod={time_range}"
+    )
 
     headers: dict[str, str] = {
         "Referer": f"https://www.acfun.cn/rank/list/?cid=-1&pcid={channel_type}&range={time_range}",

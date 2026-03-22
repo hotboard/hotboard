@@ -27,7 +27,9 @@ async def fetch(days: int = 7, location_range: str = "1") -> list[HotItem]:
     start_time_str = start_time.strftime("%Y-%m-%d+%H:%M:%S")
     end_time_str = end_time.strftime("%Y-%m-%d+%H:%M:%S")
 
-    url: str = f"https://www.cenc.ac.cn/prodlaunch-web-backend/open/data/catalogs?orderBy=id&isAsc=false&startMg=3&endMg=10&startTime={start_time_str}&endTime={end_time_str}"
+    url: str = (
+        f"https://www.cenc.ac.cn/prodlaunch-web-backend/open/data/catalogs?orderBy=id&isAsc=false&startMg=3&endMg=10&startTime={start_time_str}&endTime={end_time_str}"
+    )
 
     if location_range:
         url += f"&locationRange={location_range}"

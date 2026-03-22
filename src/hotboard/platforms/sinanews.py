@@ -63,7 +63,9 @@ async def fetch(rank_type: str = "1") -> list[HotItem]:
     """获取新浪新闻"""
     config: RankConfig = RANK_CONFIGS[rank_type]
     date_str: str = datetime.now().strftime("%Y%m%d")
-    url: str = f"https://top.{config['www']}.sina.com.cn/ws/GetTopDataList.php?top_type=day&top_cat={config['params']}&top_time={date_str}&top_show_num=50"
+    url: str = (
+        f"https://top.{config['www']}.sina.com.cn/ws/GetTopDataList.php?top_type=day&top_cat={config['params']}&top_time={date_str}&top_show_num=50"
+    )
     text: str = await http_get_text(url)
     data: dict[str, Any] = parse_jsonp(text)
     item_list: list[dict[str, Any]] = data.get("data", [])

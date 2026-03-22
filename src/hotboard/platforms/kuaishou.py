@@ -42,7 +42,9 @@ async def fetch() -> list[HotItem]:
         '$ROOT_QUERY.visionHotRank({"page":"home"})', {}
     ).get("items", []) or default_client.get(
         '$ROOT_QUERY.visionHotRank({"page":"home","platform":"web"})', {}
-    ).get("items", [])
+    ).get(
+        "items", []
+    )
     items: list[HotItem] = []
     for item in all_items:
         item_id: str = item.get("id", "")

@@ -17,7 +17,9 @@ async def fetch(month: int, day: int) -> list[HotItem]:
     """获取历史上的今天"""
     month_str: str = str(month).zfill(2)
     day_str: str = str(day).zfill(2)
-    url: str = f"https://baike.baidu.com/cms/home/eventsOnHistory/{month_str}.json?_={int(datetime.now().timestamp() * 1000)}"
+    url: str = (
+        f"https://baike.baidu.com/cms/home/eventsOnHistory/{month_str}.json?_={int(datetime.now().timestamp() * 1000)}"
+    )
     text: str = await http_get_text(url)
     result: dict[str, Any] = json.loads(text)
     month_data: dict[str, list[dict[str, Any]]] = result.get(month_str, {})

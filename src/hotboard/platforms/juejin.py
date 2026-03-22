@@ -29,7 +29,9 @@ async def get_categories() -> dict[str, str]:
 
 async def fetch(category_id: str = "1") -> list[HotItem]:
     """获取稀土掘金文章榜"""
-    url: str = f"https://api.juejin.cn/content_api/v1/content/article_rank?category_id={category_id}&type=hot"
+    url: str = (
+        f"https://api.juejin.cn/content_api/v1/content/article_rank?category_id={category_id}&type=hot"
+    )
     headers: dict[str, str] = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
     }
